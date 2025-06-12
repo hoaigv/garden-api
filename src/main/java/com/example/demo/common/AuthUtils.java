@@ -1,6 +1,5 @@
 package com.example.demo.common;
 
-import com.example.demo.user.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -12,15 +11,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthUtils {
-    UserRepository userRepository;
 
-    private Authentication getAuthentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    private String getUserEmail() {
-        return getAuthentication().getName();
-    }
 
     public static String getUserCurrent() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

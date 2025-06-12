@@ -19,6 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -28,18 +30,25 @@ public class SecurityConfig {
     JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     RestAccessDeniedHandler restAccessDeniedHandler;
     static final String[] PUBLIC_POST_ENDPOINT = {
-            "/api/auth/signup", "/api/auth/login", "/api/auth/refresh", "/api/files"
+            "/api/auth/register", "/api/auth/**", "/api/auth/refresh"
     };
-    static final String[] GET_ENDPOINT = {"/api/users/me", "/api/users/update"};
-    static final String[] PRIVATE_GET_ENDPOINT = {
 
+    static final String[] PRIVATE_ADMIN_GET_ENDPOINT = {
+            "/api/users/**"
     };
-    static final String[] PRIVATE_ADMIN_POST_ENDPOINT = {"/api/users/register"};
-    static final String[] PRIVATE_ADMIN_PUT_ENDPOINT = {"/api/users/*"};
-    static final String[] PRIVATE_ADMIN_GET_ENDPOINT = {"/api/users/*","api/doctors/*"};
-    static final String[] PRIVATE_ADMIN_DELETE_ENDPOINT = {"/api/users", "/api/address/{id}"};
-    static final String[] PRIVATE_DELETE_ENDPOINT = {"/api/address/users/{id}"};
-    static final String[] PRIVATE_POST_ENDPOINT = {"/api/address"};
+
+    static final String[] PRIVATE_ADMIN_DELETE_ENDPOINT = {
+            "/api/users/**"
+    };
+    static final String[] PRIVATE_ADMIN_PUT_ENDPOINT = {
+            "/api/users/**"
+    };
+
+    static final String[] PUBLIC_PUT_ENDPOINT = {
+            "/api/me/password"
+    };
+
+
     private static final String[] SWAGGER_WHITELIST = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
@@ -53,16 +62,16 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 request ->
                         request
-                                .requestMatchers(HttpMethod.GET, GET_ENDPOINT)
-                                .hasAnyAuthority(Role.USER.toString())
                                 .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT)
                                 .permitAll()
-                                .requestMatchers(HttpMethod.POST, PRIVATE_ADMIN_POST_ENDPOINT)
-                                .hasAnyAuthority(Role.ADMIN.toString())
-                                .requestMatchers(HttpMethod.PUT, PRIVATE_ADMIN_PUT_ENDPOINT)
-                                .hasAnyAuthority(Role.ADMIN.toString())
                                 .requestMatchers(HttpMethod.GET, PRIVATE_ADMIN_GET_ENDPOINT)
-                                .hasAnyAuthority(Role.ADMIN.toString())
+                                .hasAuthority(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.DELETE, PRIVATE_ADMIN_DELETE_ENDPOINT)
+                                .hasAuthority(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, PRIVATE_ADMIN_PUT_ENDPOINT)
+                                .hasAuthority(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, PUBLIC_PUT_ENDPOINT)
+                                .permitAll()
                                 .requestMatchers(SWAGGER_WHITELIST)
                                 .permitAll()
                                 .anyRequest()
@@ -82,11 +91,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    UrlBasedCorsConfigurationSource corsConfigurationSource() {
+    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
+        // Chỉ cho phép origin của front-end
+        configuration.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:8081"));
+        // Cho phép tất cả phương thức HTTP (GET, POST, PUT, DELETE…)
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        // Cho phép tất cả header
+        configuration.setAllowedHeaders(List.of("*"));
+        // Bật gửi cookie/authorization headers
+        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
