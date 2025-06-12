@@ -23,18 +23,21 @@ public class GlobalExceptionHandler {
   }
   @ExceptionHandler(value = MethodArgumentNotValidException.class)
   public ResponseEntity<ApiResponse<?>> handleMethodArgumentNotValidException(
-      MethodArgumentNotValidException e) {
+          MethodArgumentNotValidException e) {
+
     String errorMessage =
-        e.getBindingResult().getFieldErrors().stream()
-            .findFirst()
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-            .orElse("Invalid input data");
+            e.getBindingResult().getAllErrors().stream()
+                    .findFirst()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .orElse("Invalid input data");
 
     ApiResponse<?> apiResponse = new ApiResponse<>();
     apiResponse.setMessage(errorMessage);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
   }
+
+
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
   public ResponseEntity<?> handleHttpMessageNotReadableException(

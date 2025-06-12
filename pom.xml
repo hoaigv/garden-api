@@ -119,6 +119,12 @@
             <version>2.6.0</version>
         </dependency>
         <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-gson</artifactId>
+            <version>1.43.3</version> <!-- hoặc bản mới hơn -->
+        </dependency>
+
+        <dependency>
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>
             <version>1.36.0</version>
@@ -127,6 +133,11 @@
             <groupId>net.kaczmarzyk</groupId>
             <artifactId>specification-arg-resolver</artifactId>
             <version>${specification-arg-resolver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>1.25.0</version>  <!-- Bạn có thể kiểm tra phiên bản mới nhất trên Maven Central -->
         </dependency>
 
 

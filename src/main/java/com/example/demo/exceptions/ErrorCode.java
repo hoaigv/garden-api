@@ -11,6 +11,8 @@ public enum ErrorCode {
     TOKEN_CREATION_FAILED("Token creation failed: bad request", HttpStatus.BAD_REQUEST),
     REFRESH_TOKEN_INVALID("Refresh token is invalid or expired.", HttpStatus.UNAUTHORIZED),
     USER_NOT_FOUND("User not found.", HttpStatus.NOT_FOUND),
+    USER_ALREADY_EXISTS("User already exists.", HttpStatus.CONFLICT),
+
     PASSWORD_INCORRECT("Password is incorrect.", HttpStatus.UNAUTHORIZED),
 
     IMAGE_UPLOAD_FAILED("Image upload failed.", HttpStatus.BAD_REQUEST),
