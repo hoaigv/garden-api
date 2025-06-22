@@ -21,8 +21,13 @@ public enum ErrorCode {
     IMAGE_NOT_SUPPORTED("Image format is not supported.", HttpStatus.BAD_REQUEST),
     SET_IMAGE_FAILED("Setting image failed.", HttpStatus.INTERNAL_SERVER_ERROR),
 
+    // Garden cell service errors
+    RESOURCE_NOT_FOUND("Requested resource was not found.", HttpStatus.NOT_FOUND),
+    GARDEN_NOT_FOUND("Garden was not found.", HttpStatus.NOT_FOUND),
+    INVALID_ARGUMENT("Invalid argument.", HttpStatus.BAD_REQUEST),
 
-    ;
+    // Inventory
+    INSUFFICIENT_QUANTITY("Insufficient quantity seedling ! ", HttpStatus.BAD_REQUEST);
 
     private final String message;
     private final HttpStatus statusCode;

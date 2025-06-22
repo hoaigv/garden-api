@@ -2,9 +2,7 @@ package com.example.demo.config.security;
 
 
 import com.example.demo.common.enums.Role;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,29 +21,91 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequiredArgsConstructor
+
 public class SecurityConfig {
-    CustomJwtDecoder customJwtDecoder;
-    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    RestAccessDeniedHandler restAccessDeniedHandler;
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    private RestAccessDeniedHandler restAccessDeniedHandler;
+
+
+
+// ===================== PUBLIC (Chưa đăng nhập) =====================
     static final String[] PUBLIC_POST_ENDPOINT = {
-            "/api/auth/register", "/api/auth/**", "/api/auth/refresh"
+            "/api/auth/google",
+            "/api/auth/email",
+            "/api/auth/register",
+            "/api/auth/refresh"
     };
 
-    static final String[] PRIVATE_ADMIN_GET_ENDPOINT = {
-            "/api/users/**"
+    // ===================== USER (Đã đăng nhập - USER, ADMIN đều được) =====================
+    static final String[] USER_GET_ENDPOINT = {
+            // Gardens
+            "/api/gardens/me",
+            "/api/gardens/*",        // GET /api/gardens/{id}
+            // Garden Cells
+            "/api/*/cells",// GET /api/cells?gardenId=...
+            // Plant Inventories
+            "/api/plant-inventories/me",
     };
 
-    static final String[] PRIVATE_ADMIN_DELETE_ENDPOINT = {
-            "/api/users/**"
-    };
-    static final String[] PRIVATE_ADMIN_PUT_ENDPOINT = {
-            "/api/users/**"
+    static final String[] USER_POST_ENDPOINT = {
+            // Authentication
+            "/api/auth/logout",
+            // File upload
+            "/api/files",
+            // Gardens
+            "/api/gardens",
+            // Garden Cells
+            "/api/cells",
+            // Plant Inventories
+            "/api/plant-inventories"
     };
 
-    static final String[] PUBLIC_PUT_ENDPOINT = {
+    static final String[] USER_PUT_ENDPOINT = {
+            // Gardens
+            "/api/gardens",
+            // Garden Cells
+            "/api/cells",
+            // Plant Inventories
+            "/api/plant-inventories",
+            // Change own password
             "/api/me/password"
+    };
+
+    static final String[] USER_DELETE_ENDPOINT = {
+            // Gardens
+            "/api/gardens",
+            // Garden Cells
+            "/api/cells",
+            // Plant Inventories
+            "/api/plant-inventories"
+    };
+
+    // ===================== ADMIN (Chỉ dành cho ADMIN) =====================
+    static final String[] ADMIN_GET_ENDPOINT = {
+            // All Gardens (with paging/filter)
+            "/api/gardens",
+            // All Plant Inventories (with paging/filter)
+            "/api/plant-inventories",
+            // User management
+            "/api/users"
+    };
+
+    static final String[] ADMIN_POST_ENDPOINT = {
+            // (hiện tại chưa có POST chỉ dành admin)
+    };
+
+    static final String[] ADMIN_PUT_ENDPOINT = {
+            // Update user roles
+            "/api/users"
+    };
+
+    static final String[] ADMIN_DELETE_ENDPOINT = {
+            // Delete users
+            "/api/users"
     };
 
 
@@ -62,16 +122,19 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 request ->
                         request
-                                .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT)
-                                .permitAll()
-                                .requestMatchers(HttpMethod.GET, PRIVATE_ADMIN_GET_ENDPOINT)
-                                .hasAuthority(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, PRIVATE_ADMIN_DELETE_ENDPOINT)
-                                .hasAuthority(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, PRIVATE_ADMIN_PUT_ENDPOINT)
-                                .hasAuthority(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, PUBLIC_PUT_ENDPOINT)
-                                .permitAll()
+                                // ---- Public ----
+                                .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
+                                // ---- USER (authenticated) ----
+                                .requestMatchers(HttpMethod.GET, USER_GET_ENDPOINT).authenticated()
+                                .requestMatchers(HttpMethod.POST, USER_POST_ENDPOINT).authenticated()
+                                .requestMatchers(HttpMethod.PUT, USER_PUT_ENDPOINT).authenticated()
+                                .requestMatchers(HttpMethod.DELETE, USER_DELETE_ENDPOINT).authenticated()
+                                // ---- ADMIN-only ----
+                                .requestMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINT).hasAuthority(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, ADMIN_POST_ENDPOINT).hasAuthority(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.PUT, ADMIN_PUT_ENDPOINT).hasAuthority(Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINT).hasAuthority(Role.ADMIN.name())
+                                // ---- Swagger/OpenAPI ----
                                 .requestMatchers(SWAGGER_WHITELIST)
                                 .permitAll()
                                 .anyRequest()
@@ -94,7 +157,7 @@ public class SecurityConfig {
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Chỉ cho phép origin của front-end
-        configuration.setAllowedOrigins(List.of("http://localhost:5173","http://localhost:8081"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8081"));
         // Cho phép tất cả phương thức HTTP (GET, POST, PUT, DELETE…)
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         // Cho phép tất cả header

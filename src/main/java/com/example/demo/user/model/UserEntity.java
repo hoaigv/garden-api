@@ -5,8 +5,9 @@ import com.example.demo.chatbot.session.ChatbotSessionEntity;
 import com.example.demo.common.enums.Role;
 import com.example.demo.community.comment.model.CommentEntity;
 import com.example.demo.community.post.model.CommunityPostEntity;
-import com.example.demo.garden.model.GardenEntity;
 
+
+import com.example.demo.garden.model.GardenEntity;
 import com.example.demo.reminder.model.ReminderEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -62,6 +63,10 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     Role role;
+
+    @Column
+    String location;
+
 
     // Một user có thể có nhiều vườn
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

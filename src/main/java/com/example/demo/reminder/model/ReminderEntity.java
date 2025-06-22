@@ -1,16 +1,23 @@
 package com.example.demo.reminder.model;
 
 import com.example.demo.common.BaseEntity;
+import com.example.demo.common.enums.FrequencyType;
+import com.example.demo.common.enums.ReminderStatus;
 import com.example.demo.garden.model.GardenEntity;
-import com.example.demo.plant.model.PlantEntity;
+import com.example.demo.gardenActivity.model.GardenActivityEntity;
+import com.example.demo.gardencell.model.GardenCellEntity;
+import com.example.demo.gardenLog.model.GardenLogEntity;
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "reminders")
 @Table(name = "reminders")
@@ -24,32 +31,39 @@ import java.time.LocalDate;
 public class ReminderEntity extends BaseEntity {
 
     @Column(nullable = false, length = 100)
-    String task;   // ví dụ: "Tưới nước", "Bón phân", ...
+    String task;   // tên hoạt động, ví dụ: "Tưới nước"
 
-    @Column(length = 50)
-    String frequency; // ví dụ: "Hàng ngày", "Hàng tuần", ...
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(nullable = false)
+    GardenActivityEntity garden_activity;
+
 
     @Column
-    LocalDate nextDueDate;
+    LocalDateTime specificTime;  // thời gian cụ thể nếu áp dụng một lần
 
-    @Column(length = 20)
-    String status; // ví dụ: "PENDING", "DONE"
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    FrequencyType frequency;    // tần suất: DAILY, WEEKLY, etc.
 
-    // Quan hệ nhiều reminder – 1 user
+    @Column(nullable = false)
+    boolean applyToAllCells;    // true: áp dụng cho toàn bộ vườn
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    ReminderStatus status; // PENDING | DONE | SKIPPED
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     UserEntity user;
 
-    // Quan hệ nhiều reminder – 1 cây (có thể null nếu reminder liên quan chung cho vườn)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plant_id")
-    @JsonBackReference
-    PlantEntity plant;
-
-    // Quan hệ nhiều reminder – 1 vườn (có thể null nếu reminder chỉ cho 1 cây)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "garden_id")
+    @JoinColumn(name = "garden_id", nullable = false)
     @JsonBackReference
     GardenEntity garden;
+
+    @OneToMany(mappedBy = "reminder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    Set<GardenLogEntity> gardenLogs = new HashSet<>();
 }
