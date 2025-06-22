@@ -1,11 +1,15 @@
 package com.example.demo.garden.model;
 
 import com.example.demo.common.BaseEntity;
-import com.example.demo.gardenLog.model.GardenLogEntity;
-import com.example.demo.conditionOptimization.model.ConditionOptimizationEntity;
-import com.example.demo.plant.model.PlantEntity;
 
+import com.example.demo.common.enums.GardenCondition;
+import com.example.demo.gardenActivity.model.GardenActivityEntity;
+import com.example.demo.gardenLog.model.GardenLogEntity;
+import com.example.demo.gardenNote.model.GardenNoteEntity;
+import com.example.demo.gardencell.model.GardenCellEntity;
 import com.example.demo.reminder.model.ReminderEntity;
+import com.example.demo.suggestion.model.AIGardenSuggestionEntity;
+import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -17,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "gardens")
-@Table(name = "gardens")
+@Table
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,44 +31,53 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class GardenEntity extends BaseEntity {
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 255, nullable = false)
     String name;
 
-    @Column(length = 255)
-    String location;
+    @Column(nullable = false)
+    Integer rowLength;
 
-    @Column(length = 100)
-    String soilType;
+    @Column(nullable = false)
+    Integer colLength;
 
-    @Column(length = 100)
-    String sunlight;
+    // Tình trạng toàn khu vườn
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50, nullable = false)
+    GardenCondition gardenCondition = GardenCondition.NORMAL;
 
-    @Column(columnDefinition = "TEXT")
-    String description;
-
-    // Quan hệ với User
+    // Quan hệ nhiều vườn - 1 người dùng
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(nullable = false)
     @JsonBackReference
-    com.example.demo.user.model.UserEntity user;
+    UserEntity user;
 
-    // Một vườn có nhiều cây
-    @OneToMany(mappedBy = "garden", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // Một vườn có nhiều ô trồng
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    List<PlantEntity> plants = new ArrayList<>();
+    List<GardenCellEntity> cells = new ArrayList<>();
 
-    // Một vườn có nhiều garden_logs
-    @OneToMany(mappedBy = "garden", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // Một vườn có nhiều nhật ký
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    List<GardenLogEntity> gardenLogs = new ArrayList<>();
+    List<GardenLogEntity> logs = new ArrayList<>();
 
-    // Một vườn có nhiều condition_optimizations
-    @OneToMany(mappedBy = "garden", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonManagedReference
-    List<ConditionOptimizationEntity> conditionOptimizations = new ArrayList<>();
-
-    // Một vườn có nhiều reminders (nếu reminder liên quan tới vườn)
-    @OneToMany(mappedBy = "garden", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    // Một vườn có nhiều nhắc nhở
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     List<ReminderEntity> reminders = new ArrayList<>();
+
+    // Một vườn có nhiều ghi chú
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<GardenNoteEntity> notes = new ArrayList<>();
+
+    // Một vườn có nhiều hoạt động
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<GardenActivityEntity> activities = new ArrayList<>();
+
+    // Một vườn có nhiều gợi ý AI
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<AIGardenSuggestionEntity> aiSuggestions = new ArrayList<>();
 }

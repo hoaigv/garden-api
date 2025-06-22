@@ -1,19 +1,16 @@
-package com.example.demo.gardenLog.model;
+package com.example.demo.gardenNote.model;
 
 import com.example.demo.common.BaseEntity;
 import com.example.demo.garden.model.GardenEntity;
-import com.example.demo.gardencell.model.GardenCellEntity;
-import com.example.demo.reminder.model.ReminderEntity;
+import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
-
-@Entity(name = "garden_logs")
-@Table(name = "garden_logs")
+@Entity(name = "garden_notes")
+@Table(name = "garden_notes")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,30 +18,23 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
-public class GardenLogEntity extends BaseEntity {
+public class GardenNoteEntity extends BaseEntity {
 
-    @Column(name = "log_type", length = 100, nullable = false)
-    String logType; // e.g., REMINDER_COMPLETED, REMINDER_SKIPPED, MANUAL_ENTRY
-
-    @Column(columnDefinition = "TEXT")
-    String description;
-
-    @Column(name = "log_date", nullable = false)
-    LocalDate logDate;
+    @Column(name = "note_text", nullable = false, columnDefinition = "TEXT")
+    String noteText;
 
     @Column(name = "photo_url", length = 512)
     String photoUrl;
 
-    // Quan hệ với bảng gardens
+    // Một ghi chú thuộc về 1 khu vườn
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "garden_id", nullable = false)
     @JsonBackReference
     GardenEntity garden;
 
-
-    // Liên kết đến Reminder gốc (nếu log phát sinh từ Reminder)
+    // Một ghi chú được viết bởi 1 người dùng
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
-    ReminderEntity reminder;
+    UserEntity user;
 }

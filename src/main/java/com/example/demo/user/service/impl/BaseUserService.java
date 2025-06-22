@@ -12,7 +12,7 @@ import com.example.demo.user.controllers.dtos.UserResponse;
 import com.example.demo.user.mapper.IUserMapper;
 import com.example.demo.user.model.UserEntity;
 import com.example.demo.user.repository.UserRepository;
-import com.example.demo.user.repository.specification.UserSpecification;
+import com.example.demo.user.repository.UserSpecification;
 import com.example.demo.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

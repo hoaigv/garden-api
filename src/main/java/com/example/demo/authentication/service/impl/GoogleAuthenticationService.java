@@ -9,7 +9,7 @@ import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
 import com.example.demo.user.model.UserEntity;
 import com.example.demo.user.repository.UserRepository;
-import com.example.demo.user.repository.specification.UserSpecification;
+import com.example.demo.user.repository.UserSpecification;
 import com.example.demo.user.service.IUserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

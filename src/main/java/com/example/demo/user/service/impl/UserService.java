@@ -7,7 +7,7 @@ import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
 import com.example.demo.user.model.UserEntity;
 import com.example.demo.user.repository.UserRepository;
-import com.example.demo.user.repository.specification.UserSpecification;
+import com.example.demo.user.repository.UserSpecification;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +42,7 @@ public class UserService extends BaseUserService<RegisterRequest> {
         userRepository.save(userEntity);
 
         return ApiResponse.<Void>builder()
+                .message("Register successfully !")
                 .build();
     }
 
