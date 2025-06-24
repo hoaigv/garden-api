@@ -21,7 +21,6 @@ public interface IGardenMapper {
     @Mapping(target = "logs", ignore = true)
     @Mapping(target = "reminders", ignore = true)
     @Mapping(target = "notes", ignore = true)
-    @Mapping(target = "activities", ignore = true)
     @Mapping(target = "aiSuggestions", ignore = true)
     GardenEntity createRequestToEntity(CreateGardenRequest request);
 
@@ -43,7 +42,6 @@ public interface IGardenMapper {
     @Mapping(target = "logs", ignore = true)
     @Mapping(target = "reminders", ignore = true)
     @Mapping(target = "notes", ignore = true)
-    @Mapping(target = "activities", ignore = true)
     @Mapping(target = "aiSuggestions", ignore = true)
     void updateEntityFromRequest(UpdateGardenRequest request, @MappingTarget GardenEntity entity);
 

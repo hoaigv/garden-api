@@ -32,7 +32,7 @@ public class SecurityConfig {
 
 
 
-// ===================== PUBLIC (Chưa đăng nhập) =====================
+    // ===================== PUBLIC (Chưa đăng nhập) =====================
     static final String[] PUBLIC_POST_ENDPOINT = {
             "/api/auth/google",
             "/api/auth/email",
@@ -46,9 +46,13 @@ public class SecurityConfig {
             "/api/gardens/me",
             "/api/gardens/*",        // GET /api/gardens/{id}
             // Garden Cells
-            "/api/*/cells",// GET /api/cells?gardenId=...
+            "/api/*/cells",          // GET /api/cells?gardenId=...
             // Plant Inventories
             "/api/plant-inventories/me",
+            // Reminders
+            "/api/reminders",        // GET paged & filtered
+            "/api/reminders/me",      // GET all for current user
+            "/api/reminders/*"
     };
 
     static final String[] USER_POST_ENDPOINT = {
@@ -61,7 +65,9 @@ public class SecurityConfig {
             // Garden Cells
             "/api/cells",
             // Plant Inventories
-            "/api/plant-inventories"
+            "/api/plant-inventories",
+            // Reminders
+            "/api/reminders"         // POST create new
     };
 
     static final String[] USER_PUT_ENDPOINT = {
@@ -72,7 +78,9 @@ public class SecurityConfig {
             // Plant Inventories
             "/api/plant-inventories",
             // Change own password
-            "/api/me/password"
+            "/api/me/password",
+            // Reminders
+            "/api/reminders"         // PUT update
     };
 
     static final String[] USER_DELETE_ENDPOINT = {
@@ -81,7 +89,9 @@ public class SecurityConfig {
             // Garden Cells
             "/api/cells",
             // Plant Inventories
-            "/api/plant-inventories"
+            "/api/plant-inventories",
+            // Reminders
+            "/api/reminders"         // DELETE one or more
     };
 
     // ===================== ADMIN (Chỉ dành cho ADMIN) =====================
@@ -107,6 +117,7 @@ public class SecurityConfig {
             // Delete users
             "/api/users"
     };
+
 
 
     private static final String[] SWAGGER_WHITELIST = {
