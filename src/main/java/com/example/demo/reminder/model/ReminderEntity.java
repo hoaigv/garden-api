@@ -4,8 +4,6 @@ import com.example.demo.common.BaseEntity;
 import com.example.demo.common.enums.FrequencyType;
 import com.example.demo.common.enums.ReminderStatus;
 import com.example.demo.garden.model.GardenEntity;
-import com.example.demo.gardenActivity.model.GardenActivityEntity;
-import com.example.demo.gardencell.model.GardenCellEntity;
 import com.example.demo.gardenLog.model.GardenLogEntity;
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -33,10 +31,8 @@ public class ReminderEntity extends BaseEntity {
     @Column(nullable = false, length = 100)
     String task;   // tên hoạt động, ví dụ: "Tưới nước"
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(nullable = false)
-    GardenActivityEntity garden_activity;
-
+    @Column
+    String garden_activity;
 
     @Column
     LocalDateTime specificTime;  // thời gian cụ thể nếu áp dụng một lần
@@ -44,10 +40,6 @@ public class ReminderEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     FrequencyType frequency;    // tần suất: DAILY, WEEKLY, etc.
-
-    @Column(nullable = false)
-    boolean applyToAllCells;    // true: áp dụng cho toàn bộ vườn
-
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
