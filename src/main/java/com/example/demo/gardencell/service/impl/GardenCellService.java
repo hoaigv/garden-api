@@ -1,6 +1,7 @@
 package com.example.demo.gardencell.service.impl;
 
 import com.example.demo.common.ApiResponse;
+import com.example.demo.common.AuthUtils;
 import com.example.demo.common.enums.HealthStatus;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
@@ -14,6 +15,8 @@ import com.example.demo.gardencell.repository.GardenCellSpecification;
 import com.example.demo.gardencell.service.IGardenCellService;
 import com.example.demo.plantInventory.repository.PlantInventoryRepository;
 import com.example.demo.plantInventory.repository.PlantInventorySpecification;
+import com.example.demo.user.repository.IUserRepository;
+import com.example.demo.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
@@ -21,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +36,7 @@ public class GardenCellService implements IGardenCellService {
     IGardenCellMapper cellMapper;
     GardenRepository gardenRepository;
     PlantInventoryRepository plantInventoryRepository;
-
+    IUserRepository userRepository;
 
     @Override
     public ApiResponse<GardenCellsViewResponse> findAll(
@@ -73,6 +77,63 @@ public class GardenCellService implements IGardenCellService {
                 .message("Successfully fetched all garden cells")
                 .result(view)
                 .total((long) entities.size())
+                .build();
+    }
+
+    @Override
+    public ApiResponse<GardenCellsAdminResponse> adminFindAll(
+            String gardenId,
+            String plantInventoryId,
+            String status
+
+    ) {
+        // parse health status
+        HealthStatus hs = null;
+        if (status != null && !status.isBlank()) {
+            try {
+                hs = HealthStatus.valueOf(status);
+            } catch (IllegalArgumentException e) {
+                throw new CustomRuntimeException(ErrorCode.INVALID_ARGUMENT);
+            }
+        }
+
+        var garden = gardenRepository.findOne(GardenSpecification.hasId(gardenId))
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.GARDEN_NOT_FOUND));
+
+        // build specification
+        Specification<GardenCellEntity> spec = GardenCellSpecification.build(
+                gardenId,
+                plantInventoryId,
+                hs
+        );
+
+        // fetch *all* matching entities (no pageable, no sort)
+        List<GardenCellEntity> entities = cellRepository.findAll(spec);
+
+        // map to view DTO
+        var view = cellMapper.toViewResponse(entities);
+        view.setGardenId(gardenId);
+        view.setColLength(garden.getColLength());
+        view.setRowLength(garden.getRowLength());
+        Set<String> inventorySet = view.getCells().stream().map(
+                cell -> {
+                    var inventory = plantInventoryRepository.findOne(PlantInventorySpecification.hasId(cell.getPlantInventoryId()))
+                            .orElseThrow(() -> new CustomRuntimeException(ErrorCode.INVALID_ARGUMENT));
+                    return inventory.getName();
+                }
+        ).collect(Collectors.toSet());
+        var user = userRepository.findOne(UserSpecification.hasEmail(AuthUtils.getUserCurrent()))
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.INVALID_ARGUMENT));
+        var resp = GardenCellsAdminResponse.builder()
+                .gardenCellsViewResponse(view)
+                .createAt(garden.getCreatedAt())
+                .gardenCondition(garden.getGardenCondition().toString())
+                .inventoryPlantName(inventorySet)
+                .userName(user.getName())
+                .gardenName(garden.getName())
+                .build();
+        return ApiResponse.<GardenCellsAdminResponse>builder()
+                .result(resp)
                 .build();
     }
 

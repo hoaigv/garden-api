@@ -33,6 +33,18 @@ public class GardenCellController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/cells-admin")
+    public ResponseEntity<ApiResponse<GardenCellsAdminResponse>> adminFindAll(
+            @RequestParam String gardenId,
+            @RequestParam(required = false) String plantInventoryId,
+            @RequestParam(required = false) String status
+    ) {
+        var response = gardenCellService.adminFindAll(
+                gardenId, plantInventoryId, status
+        );
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("{gardenId}/cells")
     public ResponseEntity<ApiResponse<Void>> createCellsBatch(
             @PathVariable String gardenId,

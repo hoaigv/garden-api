@@ -11,7 +11,7 @@ import com.example.demo.user.controllers.dtos.RoleUserUpdateRequest;
 import com.example.demo.user.controllers.dtos.UserResponse;
 import com.example.demo.user.mapper.IUserMapper;
 import com.example.demo.user.model.UserEntity;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import com.example.demo.user.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import java.util.List;
 @Component
 public abstract class BaseUserService<T> implements IUserService<T> {
     @Autowired
-    private UserRepository userRepository;
+    private IUserRepository userRepository;
     @Autowired
     private IUserMapper userMapper;
 

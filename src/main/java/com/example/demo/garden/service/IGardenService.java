@@ -1,10 +1,7 @@
 package com.example.demo.garden.service;
 
 import com.example.demo.common.ApiResponse;
-import com.example.demo.garden.controller.dtos.CreateGardenRequest;
-import com.example.demo.garden.controller.dtos.DeleteGardensRequest;
-import com.example.demo.garden.controller.dtos.GardenResponse;
-import com.example.demo.garden.controller.dtos.UpdateGardenRequest;
+import com.example.demo.garden.controller.dtos.*;
 
 import java.util.List;
 
@@ -25,7 +22,7 @@ public interface IGardenService {
      * @param sortBy    field to sort by
      * @param sortDir   sort direction ("asc" or "desc")
      */
-    ApiResponse<List<GardenResponse>> findAll(
+    ApiResponse<List<GardenAdminResponse>> findAll(
             Integer page,
             Integer size,
             String userId,

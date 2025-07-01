@@ -8,7 +8,7 @@ import com.example.demo.config.security.GoogleTokenVerifier;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
 import com.example.demo.user.model.UserEntity;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import com.example.demo.user.service.IUserService;
 import lombok.AccessLevel;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class GoogleAuthenticationService extends AuthBaseService<GoogleAuthRequest> {
     GoogleTokenVerifier googleTokenVerifier;
     IUserService<GoogleUserInfo> userService;
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     @Override
     public ApiResponse<AuthenticationResponse> authenticate(GoogleAuthRequest auth) {

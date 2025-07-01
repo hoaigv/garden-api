@@ -18,17 +18,20 @@ public interface IGardenCellService {
             String gardenId,
             String plantInventoryId,
             String status
+    );
 
+    ApiResponse<GardenCellsAdminResponse> adminFindAll(
+            String gardenId,
+            String plantInventoryId,
+            String status
     );
 
 
     /**
      * Create a new garden cell.
      */
-    ApiResponse<Void>createCellsBatch(String gardenId,
-                                              List<CreateGardenCellRequest> requests);
-
-
+    ApiResponse<Void> createCellsBatch(String gardenId,
+                                       List<CreateGardenCellRequest> requests);
 
 
     /**
@@ -42,8 +45,6 @@ public interface IGardenCellService {
      * @param request Wrapper chứa gardenId và danh sách các ô cần cập nhật
      */
     ApiResponse<Void> updateCellsBatch(UpdateGardenCellsRequest request);
-
-
 
 
     /**

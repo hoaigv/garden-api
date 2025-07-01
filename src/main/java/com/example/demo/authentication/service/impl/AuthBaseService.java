@@ -8,7 +8,7 @@ import com.example.demo.common.enums.TokenType;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
 import com.example.demo.user.model.UserEntity;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public abstract class AuthBaseService<T> implements IAuthenticationService<T> {
     @Autowired
-    private UserRepository userRepository;
+    private IUserRepository userRepository;
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 

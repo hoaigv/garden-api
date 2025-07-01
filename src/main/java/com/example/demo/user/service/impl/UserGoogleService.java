@@ -4,7 +4,7 @@ import com.example.demo.authentication.controllers.dtos.GoogleUserInfo;
 import com.example.demo.common.ApiResponse;
 import com.example.demo.common.enums.Role;
 import com.example.demo.user.model.UserEntity;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserGoogleService extends BaseUserService<GoogleUserInfo> {
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
 
     @Override

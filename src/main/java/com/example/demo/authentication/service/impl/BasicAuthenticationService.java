@@ -5,7 +5,7 @@ import com.example.demo.authentication.controllers.dtos.*;
 import com.example.demo.common.ApiResponse;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BasicAuthenticationService extends AuthBaseService<AuthenticationRequest> {
 
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 

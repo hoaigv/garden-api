@@ -5,16 +5,13 @@ import com.example.demo.common.AuthUtils;
 import com.example.demo.common.enums.GardenCondition;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
-import com.example.demo.garden.controller.dtos.CreateGardenRequest;
-import com.example.demo.garden.controller.dtos.DeleteGardensRequest;
-import com.example.demo.garden.controller.dtos.GardenResponse;
-import com.example.demo.garden.controller.dtos.UpdateGardenRequest;
+import com.example.demo.garden.controller.dtos.*;
 import com.example.demo.garden.mapper.IGardenMapper;
 import com.example.demo.garden.model.GardenEntity;
 import com.example.demo.garden.repository.GardenRepository;
 import com.example.demo.garden.repository.GardenSpecification;
 import com.example.demo.garden.service.IGardenService;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,10 +33,10 @@ public class GardenService implements IGardenService {
 
     GardenRepository gardenRepository;
     IGardenMapper gardenMapper;
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     @Override
-    public ApiResponse<List<GardenResponse>> findAll(
+    public ApiResponse<List<GardenAdminResponse>> findAll(
             Integer page,
             Integer size,
             String userId,
@@ -63,11 +60,22 @@ public class GardenService implements IGardenService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortBy));
         Page<GardenEntity> pageResult = gardenRepository.findAll(spec, pageable);
 
-        List<GardenResponse> result = pageResult.getContent().stream()
-                .map(gardenMapper::entityToResponse)
+        List<GardenAdminResponse> result = pageResult.getContent().stream()
+                .map(
+                        gardenEntity -> {
+                            var gardenRes = gardenMapper.entityToResponse(gardenEntity);
+                            return GardenAdminResponse.builder()
+                                    .gardenResponse(gardenRes)
+                                    .deletedAt(gardenEntity.getDeletedAt())
+                                    .createdAt(gardenEntity.getCreatedAt())
+                                    .updatedAt(gardenEntity.getUpdatedAt())
+                                    .totalCell(gardenEntity.getColLength()*gardenEntity.getRowLength())
+                                    .build();
+                        }
+                )
                 .collect(Collectors.toList());
 
-        return ApiResponse.<List<GardenResponse>>builder()
+        return ApiResponse.<List<GardenAdminResponse>>builder()
                 .message("Successfully fetched gardens")
                 .result(result)
                 .total(pageResult.getTotalElements())

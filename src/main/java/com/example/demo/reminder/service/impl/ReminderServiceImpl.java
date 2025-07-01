@@ -3,10 +3,8 @@ package com.example.demo.reminder.service.impl;
 
 import com.example.demo.common.ApiResponse;
 import com.example.demo.common.AuthUtils;
-import com.example.demo.common.enums.ReminderStatus;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
-import com.example.demo.garden.model.GardenEntity;
 import com.example.demo.garden.repository.GardenRepository;
 import com.example.demo.garden.repository.GardenSpecification;
 import com.example.demo.reminder.controllers.dtos.CreateReminderRequest;
@@ -18,7 +16,7 @@ import com.example.demo.reminder.repository.IReminderRepository;
 import com.example.demo.reminder.repository.ReminderSpecification;
 import com.example.demo.reminder.service.IReminderService;
 import com.example.demo.user.model.UserEntity;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,7 +38,7 @@ public class ReminderServiceImpl implements IReminderService {
 
     IReminderRepository reminderRepository;
     IReminderMapper reminderMapper;
-    UserRepository userRepository;
+    IUserRepository userRepository;
     GardenRepository gardenRepository;
 
     @Override
