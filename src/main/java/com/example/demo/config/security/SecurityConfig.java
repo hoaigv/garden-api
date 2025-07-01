@@ -31,7 +31,6 @@ public class SecurityConfig {
     private RestAccessDeniedHandler restAccessDeniedHandler;
 
 
-
     // ===================== PUBLIC (Chưa đăng nhập) =====================
     static final String[] PUBLIC_POST_ENDPOINT = {
             "/api/auth/google",
@@ -44,15 +43,23 @@ public class SecurityConfig {
     static final String[] USER_GET_ENDPOINT = {
             // Gardens
             "/api/gardens/me",
-            "/api/gardens/*",        // GET /api/gardens/{id}
+            "/api/gardens/*",
             // Garden Cells
-            "/api/*/cells",          // GET /api/cells?gardenId=...
+            "/api/*/cells",
             // Plant Inventories
             "/api/plant-inventories/me",
             // Reminders
-            "/api/reminders",        // GET paged & filtered
-            "/api/reminders/me",      // GET all for current user
-            "/api/reminders/*"
+            "/api/reminders",
+            "/api/reminders/me",
+            "/api/reminders/*",
+            // Garden Notes
+            "/api/garden-notes",
+            "/api/garden-notes/me",
+            "/api/garden-notes/*",
+            // Chatbot Sessions
+            "/api/chatbot-sessions/me",   // GET all for current user
+            "/api/chatbot-sessions/*",  // GET single session by ID
+            "/api/chatbot-logs/*"
     };
 
     static final String[] USER_POST_ENDPOINT = {
@@ -67,7 +74,11 @@ public class SecurityConfig {
             // Plant Inventories
             "/api/plant-inventories",
             // Reminders
-            "/api/reminders"         // POST create new
+            "/api/reminders",
+            // Garden Notes
+            "/api/garden-notes",
+            // Chatbot Sessions
+            "/api/chatbot-sessions/new-chat"  // POST create new session
     };
 
     static final String[] USER_PUT_ENDPOINT = {
@@ -80,7 +91,11 @@ public class SecurityConfig {
             // Change own password
             "/api/me/password",
             // Reminders
-            "/api/reminders"         // PUT update
+            "/api/reminders",
+            // Garden Notes
+            "/api/garden-notes",
+            // (Chatbot sessions only support create & delete in current design)
+            "/api/chatbot-sessions"
     };
 
     static final String[] USER_DELETE_ENDPOINT = {
@@ -91,17 +106,25 @@ public class SecurityConfig {
             // Plant Inventories
             "/api/plant-inventories",
             // Reminders
-            "/api/reminders"         // DELETE one or more
+            "/api/reminders",
+            // Garden Notes
+            "/api/garden-notes",
+            // Chatbot Sessions
+            "/api/chatbot-sessions"  ,       // DELETE one or more own sessions
+            "/api/chatbot-sessions"
     };
 
     // ===================== ADMIN (Chỉ dành cho ADMIN) =====================
     static final String[] ADMIN_GET_ENDPOINT = {
             // All Gardens (with paging/filter)
             "/api/gardens",
+            "/api/cells-admin",
             // All Plant Inventories (with paging/filter)
             "/api/plant-inventories",
             // User management
-            "/api/users"
+            "/api/users",
+            // Chatbot Sessions (full list)
+            "/api/chatbot-sessions"         // GET paged & filtered for admin
     };
 
     static final String[] ADMIN_POST_ENDPOINT = {
@@ -115,9 +138,10 @@ public class SecurityConfig {
 
     static final String[] ADMIN_DELETE_ENDPOINT = {
             // Delete users
-            "/api/users"
+            "/api/users",
+            // Chatbot Sessions (admin can delete any session)
+            "/api/chatbot-sessions"
     };
-
 
 
     private static final String[] SWAGGER_WHITELIST = {

@@ -16,5 +16,4 @@ public class GardenResponse {
     Integer colLength;
     GardenCondition gardenCondition;
     String userId;
-
 }

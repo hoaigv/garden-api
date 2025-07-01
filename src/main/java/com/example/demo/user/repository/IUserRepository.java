@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository
+public interface IUserRepository
         extends JpaRepository<UserEntity, String>, JpaSpecificationExecutor<UserEntity> {
 
     @Query("SELECT u FROM users u WHERE u.email = :email AND u.deletedAt IS NULL")

@@ -6,7 +6,7 @@ import com.example.demo.common.enums.Role;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
 import com.example.demo.user.model.UserEntity;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService extends BaseUserService<RegisterRequest> {
 
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 

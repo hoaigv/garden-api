@@ -1,7 +1,7 @@
-package com.example.demo.chatbot.log;
+package com.example.demo.chatbot.log.model;
 
 import com.example.demo.common.BaseEntity;
-import com.example.demo.chatbot.session.ChatbotSessionEntity;
+import com.example.demo.chatbot.session.model.ChatbotSessionEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;

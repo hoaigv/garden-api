@@ -1,7 +1,7 @@
 package com.example.demo.user.model;
 
 import com.example.demo.common.BaseEntity;
-import com.example.demo.chatbot.session.ChatbotSessionEntity;
+import com.example.demo.chatbot.session.model.ChatbotSessionEntity;
 import com.example.demo.common.enums.Role;
 import com.example.demo.community.comment.model.CommentEntity;
 import com.example.demo.community.post.model.CommunityPostEntity;

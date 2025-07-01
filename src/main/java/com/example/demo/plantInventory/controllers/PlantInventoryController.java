@@ -2,10 +2,7 @@ package com.example.demo.plantInventory.controllers;
 
 import com.example.demo.common.ApiResponse;
 import com.example.demo.common.annotation.positiveOrDefault.PositiveOrDefault;
-import com.example.demo.plantInventory.controllers.dtos.CreatePlantInventoryRequest;
-import com.example.demo.plantInventory.controllers.dtos.DeletePlantInventoriesRequest;
-import com.example.demo.plantInventory.controllers.dtos.PlantInventoryResponse;
-import com.example.demo.plantInventory.controllers.dtos.UpdatePlantInventoryRequest;
+import com.example.demo.plantInventory.controllers.dtos.*;
 import com.example.demo.plantInventory.service.IPlantInventoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -28,7 +25,7 @@ public class PlantInventoryController {
      * Get paged list of plant inventories with optional filters.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PlantInventoryResponse>>> findAll(
+    public ResponseEntity<ApiResponse<List<PlantInventoryAdminResponse>>> findAll(
             @PositiveOrDefault int page,
             @PositiveOrDefault(defaultValue = 10) int size,
             @RequestParam(required = false) String userId,
@@ -36,7 +33,7 @@ public class PlantInventoryController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir
     ) {
-        ApiResponse<List<PlantInventoryResponse>> response = inventoryService.findAll(
+        var response = inventoryService.findAll(
                 page, size, userId, plantType, sortBy, sortDir
         );
         return ResponseEntity.ok(response);

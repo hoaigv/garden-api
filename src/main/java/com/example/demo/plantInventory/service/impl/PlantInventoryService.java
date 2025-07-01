@@ -5,16 +5,13 @@ import com.example.demo.common.AuthUtils;
 import com.example.demo.common.enums.PlantTypeEnum;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
-import com.example.demo.plantInventory.controllers.dtos.CreatePlantInventoryRequest;
-import com.example.demo.plantInventory.controllers.dtos.DeletePlantInventoriesRequest;
-import com.example.demo.plantInventory.controllers.dtos.PlantInventoryResponse;
-import com.example.demo.plantInventory.controllers.dtos.UpdatePlantInventoryRequest;
+import com.example.demo.plantInventory.controllers.dtos.*;
 import com.example.demo.plantInventory.mapper.IPlantInventoryMapper;
 import com.example.demo.plantInventory.model.PlantInventoryEntity;
 import com.example.demo.plantInventory.repository.PlantInventoryRepository;
 import com.example.demo.plantInventory.repository.PlantInventorySpecification;
 import com.example.demo.plantInventory.service.IPlantInventoryService;
-import com.example.demo.user.repository.UserRepository;
+import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,10 +33,10 @@ public class PlantInventoryService implements IPlantInventoryService {
 
     PlantInventoryRepository inventoryRepository;
     IPlantInventoryMapper inventoryMapper;
-    UserRepository userRepository;
+    IUserRepository userRepository;
 
     @Override
-    public ApiResponse<List<PlantInventoryResponse>> findAll(
+    public ApiResponse<List<PlantInventoryAdminResponse>> findAll(
             Integer page,
             Integer size,
             String userId,
@@ -74,11 +71,19 @@ public class PlantInventoryService implements IPlantInventoryService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortBy));
         Page<PlantInventoryEntity> pageResult = inventoryRepository.findAll(spec, pageable);
 
-        List<PlantInventoryResponse> result = pageResult.getContent().stream()
-                .map(inventoryMapper::entityToResponse)
+        var result = pageResult.getContent().stream()
+                .map(entity -> {
+                    var inven = inventoryMapper.entityToResponse(entity);
+                    return PlantInventoryAdminResponse.builder()
+                            .plantInventoryResponse(inven)
+                            .createdAt(entity.getCreatedAt())
+                            .updatedAt(entity.getUpdatedAt())
+                            .deletedAt(entity.getDeletedAt())
+                            .build();
+                })
                 .collect(Collectors.toList());
 
-        return ApiResponse.<List<PlantInventoryResponse>>builder()
+        return ApiResponse.<List<PlantInventoryAdminResponse>>builder()
                 .message("Successfully fetched plant inventories")
                 .result(result)
                 .total(pageResult.getTotalElements())

@@ -1,7 +1,8 @@
-package com.example.demo.chatbot.session;
+package com.example.demo.chatbot.session.model;
 
+import com.example.demo.chatbot.log.model.ChatbotLogEntity;
 import com.example.demo.common.BaseEntity;
-import com.example.demo.chatbot.log.ChatbotLogEntity;
+
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -10,7 +11,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +25,9 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class ChatbotSessionEntity extends BaseEntity {
 
-    @Column(nullable = false)
-    LocalDateTime sessionStart;
 
-    @Column
-    LocalDateTime sessionEnd;
-
-
-    @Column(columnDefinition = "LONGTEXT")
-    String context;
+    @Column(length = 512, nullable = false)
+    String chatTile;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

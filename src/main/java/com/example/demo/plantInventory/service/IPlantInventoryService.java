@@ -1,10 +1,7 @@
 package com.example.demo.plantInventory.service;
 
 import com.example.demo.common.ApiResponse;
-import com.example.demo.plantInventory.controllers.dtos.CreatePlantInventoryRequest;
-import com.example.demo.plantInventory.controllers.dtos.DeletePlantInventoriesRequest;
-import com.example.demo.plantInventory.controllers.dtos.PlantInventoryResponse;
-import com.example.demo.plantInventory.controllers.dtos.UpdatePlantInventoryRequest;
+import com.example.demo.plantInventory.controllers.dtos.*;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public interface IPlantInventoryService {
      * @param sortBy    field to sort by
      * @param sortDir   sort direction ("asc" or "desc")
      */
-    ApiResponse<List<PlantInventoryResponse>> findAll(
+    ApiResponse<List<PlantInventoryAdminResponse>> findAll(
             Integer page,
             Integer size,
             String userId,

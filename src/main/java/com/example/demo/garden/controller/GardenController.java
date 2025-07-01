@@ -2,10 +2,7 @@ package com.example.demo.garden.controller;
 
 import com.example.demo.common.ApiResponse;
 import com.example.demo.common.annotation.positiveOrDefault.PositiveOrDefault;
-import com.example.demo.garden.controller.dtos.CreateGardenRequest;
-import com.example.demo.garden.controller.dtos.DeleteGardensRequest;
-import com.example.demo.garden.controller.dtos.GardenResponse;
-import com.example.demo.garden.controller.dtos.UpdateGardenRequest;
+import com.example.demo.garden.controller.dtos.*;
 import com.example.demo.garden.service.IGardenService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -28,7 +25,7 @@ public class GardenController {
      * Get paged list of gardens with optional filters (Admin).
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<GardenResponse>>> findAll(
+    public ResponseEntity<ApiResponse<List<GardenAdminResponse>>> findAll(
             @PositiveOrDefault int page,
             @PositiveOrDefault(defaultValue = 10) int size,
             @RequestParam(required = false) String userId,
@@ -41,7 +38,7 @@ public class GardenController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir
     ) {
-        ApiResponse<List<GardenResponse>> response = gardenService.findAll(
+        var response = gardenService.findAll(
                 page, size, userId, name, condition, minRows, maxRows, minCols, maxCols, sortBy, sortDir
         );
         return ResponseEntity.ok(response);
