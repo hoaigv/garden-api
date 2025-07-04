@@ -2,6 +2,7 @@ package com.example.demo.garden.repository;
 
 import com.example.demo.garden.model.GardenEntity;
 import com.example.demo.common.enums.GardenCondition;
+import com.example.demo.user.model.UserEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -16,6 +17,9 @@ public class GardenSpecification {
         return (root, query, cb) -> cb.equal(root.get("id"), id);
     }
 
+    public  static Specification<GardenEntity> isNotDelete() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get("deletedAt"));
+    }
     /**
      * Filter by user ID owning the garden.
      */

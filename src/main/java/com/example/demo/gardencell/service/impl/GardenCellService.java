@@ -2,6 +2,7 @@ package com.example.demo.gardencell.service.impl;
 
 import com.example.demo.common.ApiResponse;
 import com.example.demo.common.AuthUtils;
+import com.example.demo.common.enums.GardenCondition;
 import com.example.demo.common.enums.HealthStatus;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
@@ -208,6 +209,14 @@ public class GardenCellService implements IGardenCellService {
             cellMapper.updateEntityFromRequest(req, entity);
         }
         cellRepository.saveAll(entities);
+        var isGardenDisease = cellRepository.findAll(GardenCellSpecification.hasGardenId(entities.get(0).getGarden().getId())
+                .and(GardenCellSpecification.hasHealthStatus(HealthStatus.DISEASED))).isEmpty();
+        if(!isGardenDisease){
+            var gardenCurrent = gardenRepository.findOne(GardenSpecification.hasId(entities.get(0).getGarden().getId()))
+                    .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
+            gardenCurrent.setGardenCondition(GardenCondition.DISEASED);
+            gardenRepository.save(gardenCurrent);
+        }
 
         return ApiResponse.<Void>builder()
                 .message("Garden cells updated successfully")

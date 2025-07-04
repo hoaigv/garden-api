@@ -84,7 +84,24 @@ public class ReminderServiceImpl implements IReminderService {
     }
 
     @Override
-    public ApiResponse<List<ReminderResponse>> findAllForCurrentUser() {
+    public ApiResponse<List<ReminderResponse>> findAllForCurrentUser(String gardenId) {
+        UserEntity currentUser = userRepository.findOne(
+                UserSpecification.hasEmail(AuthUtils.getUserCurrent())
+        ).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
+
+        Specification<ReminderEntity> spec = (root, query, cb) -> cb.equal(root.get("user").get("id"), currentUser.getId());
+        List<ReminderResponse> dtos = reminderRepository.findAll(spec.and(ReminderSpecification.hasGardenId(gardenId))).stream()
+                .map(reminderMapper::toResponse)
+                .collect(Collectors.toList());
+
+        return ApiResponse.<List<ReminderResponse>>builder()
+                .message("Fetched reminders for current user")
+                .result(dtos)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<List<ReminderResponse>> findAllForUser() {
         UserEntity currentUser = userRepository.findOne(
                 UserSpecification.hasEmail(AuthUtils.getUserCurrent())
         ).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));

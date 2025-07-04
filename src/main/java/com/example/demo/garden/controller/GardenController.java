@@ -90,7 +90,7 @@ public class GardenController {
      * Delete one or more gardens by ID.
      */
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteGardens(
+    public ResponseEntity<ApiResponse<Void>> updatePublicStatus(
             @RequestBody @Valid DeleteGardensRequest request
     ) {
         ApiResponse<Void> response = gardenService.deleteGardens(request);

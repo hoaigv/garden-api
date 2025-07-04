@@ -38,7 +38,13 @@ public interface IReminderService {
      *
      * @return ApiResponse containing list of ReminderResponse for current user
      */
-    ApiResponse<List<ReminderResponse>> findAllForCurrentUser();
+    ApiResponse<List<ReminderResponse>> findAllForCurrentUser(String gardenId);
+    /**
+     * Retrieve the full list of reminders for the currently authenticated user.
+     *
+     * @return ApiResponse containing list of ReminderResponse for current user
+     */
+    ApiResponse<List<ReminderResponse>> findAllForUser();
 
     /**
      * Create a new reminder entry.

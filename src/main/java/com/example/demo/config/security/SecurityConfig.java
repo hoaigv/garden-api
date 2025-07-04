@@ -30,7 +30,6 @@ public class SecurityConfig {
     @Autowired
     private RestAccessDeniedHandler restAccessDeniedHandler;
 
-
     // ===================== PUBLIC (Chưa đăng nhập) =====================
     static final String[] PUBLIC_POST_ENDPOINT = {
             "/api/auth/google",
@@ -50,6 +49,7 @@ public class SecurityConfig {
             "/api/plant-inventories/me",
             // Reminders
             "/api/reminders",
+            "/api/reminders/*/me",
             "/api/reminders/me",
             "/api/reminders/*",
             // Garden Notes
@@ -57,9 +57,24 @@ public class SecurityConfig {
             "/api/garden-notes/me",
             "/api/garden-notes/*",
             // Chatbot Sessions
-            "/api/chatbot-sessions/me",   // GET all for current user
-            "/api/chatbot-sessions/*",  // GET single session by ID
-            "/api/chatbot-logs/*"
+            "/api/chatbot-sessions/me",
+            "/api/chatbot-sessions/*",
+            "/api/chatbot-logs/*",
+            // Community Posts
+            "/api/posts/me",
+            "/api/posts/*",
+            "/api/posts",
+            // Comments
+            "/api/comments",
+            "/api/comments/post/*",
+            "/api/comments/*",
+            // Likes
+            "/api/likes",
+            "/api/likes/me",
+            "/api/likes/post/*",
+            "/api/likes/*",
+            //post
+            "/api/post"
     };
 
     static final String[] USER_POST_ENDPOINT = {
@@ -78,7 +93,13 @@ public class SecurityConfig {
             // Garden Notes
             "/api/garden-notes",
             // Chatbot Sessions
-            "/api/chatbot-sessions/new-chat"  // POST create new session
+            "/api/chatbot-sessions/new-chat",
+            // Community Posts
+            "/api/posts",
+            // Comments
+            "/api/comments",
+            // Likes
+            "/api/likes"
     };
 
     static final String[] USER_PUT_ENDPOINT = {
@@ -94,8 +115,14 @@ public class SecurityConfig {
             "/api/reminders",
             // Garden Notes
             "/api/garden-notes",
-            // (Chatbot sessions only support create & delete in current design)
-            "/api/chatbot-sessions"
+            // Chatbot Sessions
+            "/api/chatbot-sessions",
+            // Community Posts
+            "/api/posts",
+            // Comments
+            "/api/comments",
+            // Likes
+            "/api/likes"
     };
 
     static final String[] USER_DELETE_ENDPOINT = {
@@ -110,25 +137,41 @@ public class SecurityConfig {
             // Garden Notes
             "/api/garden-notes",
             // Chatbot Sessions
-            "/api/chatbot-sessions"  ,       // DELETE one or more own sessions
-            "/api/chatbot-sessions"
+            "/api/chatbot-sessions",
+            // Community Posts
+            "/api/posts",
+            // Comments
+            "/api/comments",
+            // Likes
+            "/api/likes/*"
     };
 
     // ===================== ADMIN (Chỉ dành cho ADMIN) =====================
     static final String[] ADMIN_GET_ENDPOINT = {
-            // All Gardens (with paging/filter)
+            // All Gardens
             "/api/gardens",
             "/api/cells-admin",
-            // All Plant Inventories (with paging/filter)
+            // All Plant Inventories
             "/api/plant-inventories",
             // User management
             "/api/users",
             // Chatbot Sessions (full list)
-            "/api/chatbot-sessions"         // GET paged & filtered for admin
+            "/api/chatbot-sessions",
+            // Community Posts
+            "/api/posts",
+            // Comments
+            "/api/comments",
+            "/api/comments/post/*",
+            "/api/comments/*",
+            // Likes
+            "/api/likes",
+            "/api/likes/me",
+            "/api/likes/post/*",
+            "/api/likes/*"
     };
 
     static final String[] ADMIN_POST_ENDPOINT = {
-            // (hiện tại chưa có POST chỉ dành admin)
+            // (hiện tại không có POST chỉ dành cho admin)
     };
 
     static final String[] ADMIN_PUT_ENDPOINT = {
@@ -139,11 +182,15 @@ public class SecurityConfig {
     static final String[] ADMIN_DELETE_ENDPOINT = {
             // Delete users
             "/api/users",
-            // Chatbot Sessions (admin can delete any session)
-            "/api/chatbot-sessions"
+            // Chatbot Sessions
+            "/api/chatbot-sessions",
+            // Community Posts
+            "/api/posts",
+            // Comments
+            "/api/comments",
+            // Likes
+            "/api/likes"
     };
-
-
     private static final String[] SWAGGER_WHITELIST = {
             "/swagger-ui/**",
             "/v3/api-docs/**",

@@ -95,8 +95,13 @@ public abstract class BaseUserService<T> implements IUserService<T> {
             if (!UserSpecification.hasId(id).toString().isEmpty()) {
                 var user = userRepository.findOne(UserSpecification.hasId(id))
                         .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
-                user.setDeletedAt(LocalDateTime.now());
-                userRepository.save(user);
+                if (user.getDeletedAt() != null) {
+                    user.setDeletedAt(LocalDateTime.now());
+                    userRepository.save(user);
+                } else {
+                    user.setDeletedAt(null);
+                    userRepository.save(user);
+                }
             }
         }
         return ApiResponse.<Void>builder()

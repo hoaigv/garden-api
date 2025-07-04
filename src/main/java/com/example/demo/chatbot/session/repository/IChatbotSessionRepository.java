@@ -2,6 +2,7 @@ package com.example.demo.chatbot.session.repository;
 
 import com.example.demo.chatbot.session.model.ChatbotSessionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Optional;
  * Repository interface for ChatbotSessionEntity
  */
 @Repository
-public interface IChatbotSessionRepository extends JpaRepository<ChatbotSessionEntity, String> {
+public interface IChatbotSessionRepository extends JpaRepository<ChatbotSessionEntity, String>, JpaSpecificationExecutor<ChatbotSessionEntity> {
 
     /**
      * Find a session by its sessionId

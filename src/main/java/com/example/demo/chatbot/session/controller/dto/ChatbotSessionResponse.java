@@ -1,9 +1,7 @@
 package com.example.demo.chatbot.session.controller.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
@@ -14,19 +12,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatbotSessionResponse {
     /**
      * Internal database ID (UUID)
      */
-    private String id;
+    String id;
 
     /**
      * Title of the chat session
      */
-    private String chatTitle;
+    String chatTitle;
 
 
-    private LocalDateTime createAt;
+    LocalDateTime createAt;
 
 
 }
