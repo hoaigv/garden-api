@@ -17,6 +17,8 @@ public interface IUserRepository
     @Query("SELECT u FROM users u WHERE u.email = :email AND u.deletedAt IS NULL")
     Optional<UserEntity> findByEmailAndNotDeleted(@Param("email") String email);
 
+    UserEntity findByEmail(String email);
+
 
     @Query(
             "select case when count(u) > 0 then true else false end from users u where u.deletedAt is  null and u.googleId = :googleId")

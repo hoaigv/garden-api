@@ -27,6 +27,7 @@ public class ChatLogSpecification {
         };
     }
 
+
     /**
      * Filter logs containing a substring in the user's message.
      */

@@ -1,5 +1,6 @@
 package com.example.demo.chatbot.session.controller;
 
+import com.example.demo.chatbot.session.controller.dto.AdminChatbotSessionResponse;
 import com.example.demo.chatbot.session.controller.dto.ChatbotSessionResponse;
 import com.example.demo.chatbot.session.controller.dto.ChatbotSessionUpdateRequest;
 import com.example.demo.chatbot.session.controller.dto.DeleteChatbotSessionRequest;
@@ -28,16 +29,14 @@ public class ChatbotSessionController {
      * Get paged list of chatbot sessions with optional filters (Admin).
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ChatbotSessionResponse>>> findAll(
+    public ResponseEntity<ApiResponse<List<AdminChatbotSessionResponse>>> findAll(
             @PositiveOrDefault int page,
             @PositiveOrDefault(defaultValue = 10) int size,
-            @RequestParam(required = false) String userId,
-            @RequestParam(required = false) String chatTitle,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir
     ) {
-        ApiResponse<List<ChatbotSessionResponse>> response = sessionService.findAll(
-                page, size, userId, chatTitle, sortBy, sortDir
+        var response = sessionService.findAll(
+                page, size, sortBy, sortDir
         );
         return ResponseEntity.ok(response);
     }

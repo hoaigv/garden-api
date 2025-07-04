@@ -1,5 +1,6 @@
 package com.example.demo.chatbot.session.service;
 
+import com.example.demo.chatbot.session.controller.dto.AdminChatbotSessionResponse;
 import com.example.demo.chatbot.session.controller.dto.ChatbotSessionResponse;
 import com.example.demo.chatbot.session.controller.dto.ChatbotSessionUpdateRequest;
 import com.example.demo.chatbot.session.controller.dto.DeleteChatbotSessionRequest;
@@ -16,19 +17,16 @@ public interface IChatbotSessionService {
     /**
      * Retrieve a paged and optionally filtered list of chatbot sessions (admin only).
      *
-     * @param page      zero-based page index
-     * @param size      page size
-     * @param userId    optional owner user ID filter
-     * @param chatTitle optional session title filter (contains)
-     * @param sortBy    field to sort by
-     * @param sortDir   sort direction ("asc" or "desc")
+     * @param page    zero-based page index
+     * @param size    page size
+     * @param sortBy  field to sort by
+     * @param sortDir sort direction ("asc" or "desc")
      * @return ApiResponse containing list of ChatbotSessionResponse
      */
-    ApiResponse<List<ChatbotSessionResponse>> findAll(
+    ApiResponse<List<AdminChatbotSessionResponse>> findAll(
             Integer page,
             Integer size,
-            String userId,
-            String chatTitle,
+
             String sortBy,
             String sortDir
     );

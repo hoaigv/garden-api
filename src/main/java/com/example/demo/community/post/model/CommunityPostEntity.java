@@ -2,6 +2,7 @@ package com.example.demo.community.post.model;
 
 import com.example.demo.common.BaseEntity;
 import com.example.demo.community.comment.model.CommentEntity;
+import com.example.demo.community.like.model.LikeEntity;
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -24,11 +25,12 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class CommunityPostEntity extends BaseEntity {
 
-    @Column(nullable = false, length = 150)
-    String title;
 
     @Column(columnDefinition = "TEXT")
     String body;
+
+    @Column
+    String imageLink;
 
     // Nhiều post – 1 user
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,4 +42,9 @@ public class CommunityPostEntity extends BaseEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     List<CommentEntity> comments = new ArrayList<>();
+
+    // 1 post – n like
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<LikeEntity> likes = new ArrayList<>();
 }

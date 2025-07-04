@@ -43,13 +43,25 @@ public class ReminderController {
     }
 
     /**
+     * Get all reminders for the current authenticated user for each garden.
+     */
+    @GetMapping("{gardenId}/me")
+    public ResponseEntity<ApiResponse<List<ReminderResponse>>> findAllForCurrentUser(
+            @PathVariable String gardenId
+    ) {
+        ApiResponse<List<ReminderResponse>> response = reminderService.findAllForCurrentUser(gardenId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Get all reminders for the current authenticated user.
      */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<List<ReminderResponse>>> findAllForCurrentUser() {
-        ApiResponse<List<ReminderResponse>> response = reminderService.findAllForCurrentUser();
+        ApiResponse<List<ReminderResponse>> response = reminderService.findAllForUser();
         return ResponseEntity.ok(response);
     }
+
 
     /**
      * Get all reminders for the current authenticated user.

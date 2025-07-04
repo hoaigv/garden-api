@@ -11,6 +11,8 @@ import com.example.demo.garden.model.GardenEntity;
 import com.example.demo.garden.repository.GardenRepository;
 import com.example.demo.garden.repository.GardenSpecification;
 import com.example.demo.garden.service.IGardenService;
+import com.example.demo.gardencell.repository.GardenCellSpecification;
+import com.example.demo.gardencell.repository.IGardenCellRepository;
 import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +37,7 @@ public class GardenService implements IGardenService {
     GardenRepository gardenRepository;
     IGardenMapper gardenMapper;
     IUserRepository userRepository;
+    IGardenCellRepository cellRepository;
 
     @Override
     public ApiResponse<List<GardenAdminResponse>> findAll(
@@ -69,7 +73,7 @@ public class GardenService implements IGardenService {
                                     .deletedAt(gardenEntity.getDeletedAt())
                                     .createdAt(gardenEntity.getCreatedAt())
                                     .updatedAt(gardenEntity.getUpdatedAt())
-                                    .totalCell(gardenEntity.getColLength()*gardenEntity.getRowLength())
+                                    .totalCell(gardenEntity.getColLength() * gardenEntity.getRowLength())
                                     .build();
                         }
                 )
@@ -102,7 +106,7 @@ public class GardenService implements IGardenService {
                 null
         );
 
-        List<GardenResponse> dtos = gardenRepository.findAll(spec).stream()
+        List<GardenResponse> dtos = gardenRepository.findAll(spec.and(GardenSpecification.isNotDelete())).stream()
                 .map(gardenMapper::entityToResponse)
                 .collect(Collectors.toList());
 
@@ -154,7 +158,16 @@ public class GardenService implements IGardenService {
         for (String id : request.getIds()) {
             GardenEntity entity = gardenRepository.findById(id)
                     .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
-            gardenRepository.delete(entity);
+           if(entity.getDeletedAt() == null) {
+               entity.setDeletedAt( LocalDateTime.now() );
+               gardenRepository.save(entity);
+
+           }else {
+               entity.setDeletedAt(null);
+               gardenRepository.save(entity);
+           }
+
+
         }
         return ApiResponse.<Void>builder()
                 .message("Gardens deleted successfully")
