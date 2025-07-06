@@ -185,6 +185,17 @@ public class GardenCellService implements IGardenCellService {
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
         cellMapper.updateEntityFromRequest(request, entity);
         cellRepository.save(entity);
+        if (cellRepository.equals(GardenCellSpecification.hasGardenId(entity.getGarden().getId()).and(
+                GardenCellSpecification.hasHealthStatus(HealthStatus.DISEASED)
+        ))) {
+            var garden = gardenRepository.findOne(GardenSpecification.hasId(entity.getGarden().getId()))
+                    .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
+            garden.setGardenCondition(GardenCondition.DISEASED);
+        } else {
+            var garden = gardenRepository.findOne(GardenSpecification.hasId(entity.getGarden().getId()))
+                    .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
+            garden.setGardenCondition(GardenCondition.NORMAL);
+        }
         return ApiResponse.<Void>builder()
                 .message("Garden cell updated successfully")
                 .build();
@@ -211,10 +222,15 @@ public class GardenCellService implements IGardenCellService {
         cellRepository.saveAll(entities);
         var isGardenDisease = cellRepository.findAll(GardenCellSpecification.hasGardenId(entities.get(0).getGarden().getId())
                 .and(GardenCellSpecification.hasHealthStatus(HealthStatus.DISEASED))).isEmpty();
-        if(!isGardenDisease){
+        if (!isGardenDisease) {
             var gardenCurrent = gardenRepository.findOne(GardenSpecification.hasId(entities.get(0).getGarden().getId()))
                     .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
             gardenCurrent.setGardenCondition(GardenCondition.DISEASED);
+            gardenRepository.save(gardenCurrent);
+        }else{
+            var gardenCurrent = gardenRepository.findOne(GardenSpecification.hasId(entities.get(0).getGarden().getId()))
+                    .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
+            gardenCurrent.setGardenCondition(GardenCondition.NORMAL);
             gardenRepository.save(gardenCurrent);
         }
 

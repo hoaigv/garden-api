@@ -1,7 +1,7 @@
-package com.example.demo.community.comment.model;
+package com.example.demo.notification.model;
 
 import com.example.demo.common.BaseEntity;
-import com.example.demo.community.post.model.CommunityPostEntity;
+import com.example.demo.reminder.model.ReminderEntity;
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -9,7 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity(name = "comment_post")
+@Entity(name = "notifications")
 @Table
 @Getter
 @Setter
@@ -18,21 +18,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EntityListeners(AuditingEntityListener.class)
-public class CommentEntity extends BaseEntity {
+public class NotificationEntity extends BaseEntity {
+    @Column(nullable = false, length = 512)
+    String title;
 
-    @Column(columnDefinition = "TEXT")
-    String content;
-
-
-    // Nhiều comment – 1 post
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(nullable = false)
     @JsonBackReference
-    CommunityPostEntity post;
+    ReminderEntity reminder;
 
-    // Nhiều comment – 1 user
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(nullable = false)
     @JsonBackReference
     UserEntity user;
+
 }

@@ -1,10 +1,13 @@
+// src/main/java/com/example/demo/reminder/controllers/dtos/ReminderResponse.java
 package com.example.demo.reminder.controllers.dtos;
 
-import com.example.demo.common.enums.ReminderStatus;
+import com.example.demo.common.enums.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,12 +17,18 @@ import java.time.LocalDateTime;
 public class ReminderResponse {
 
     String id;
-    String task;
-    String gardenActivity;
-    LocalDateTime specificTime;
-    String frequency;
+    String title;
+    ActionType actionType;
+    ScheduleType scheduleType;
+    LocalDateTime fixedDateTime;
+    FrequencyType frequency;
+    LocalTime timeOfDay;
+    List<WeekDay> daysOfWeek;
+    Integer dayOfMonth;
     ReminderStatus status;
     String gardenId;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
+    LocalDateTime deletedAt;
+    String gardenName;
 }
