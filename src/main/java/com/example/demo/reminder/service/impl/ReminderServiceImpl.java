@@ -4,11 +4,13 @@ import com.example.demo.common.ApiResponse;
 import com.example.demo.common.AuthUtils;
 import com.example.demo.common.enums.ActionType;
 import com.example.demo.common.enums.FrequencyType;
+import com.example.demo.common.enums.ReminderStatus;
 import com.example.demo.common.enums.ScheduleType;
 import com.example.demo.exceptions.ErrorCode;
 import com.example.demo.exceptions.custom.CustomRuntimeException;
 import com.example.demo.garden.repository.GardenRepository;
 import com.example.demo.garden.repository.GardenSpecification;
+import com.example.demo.gardenLog.service.GardenLogService;
 import com.example.demo.gardencell.repository.IGardenCellRepository;
 import com.example.demo.reminder.controllers.dtos.CreateReminderRequest;
 import com.example.demo.reminder.controllers.dtos.UpdateReminderRequest;
@@ -42,6 +44,7 @@ public class ReminderServiceImpl implements IReminderService {
     IUserRepository userRepository;
     GardenRepository gardenRepository;
     IReminderMapper mapper;
+    GardenLogService gardenLogService;
 
     @Override
     public ApiResponse<ReminderResponse> createReminder(CreateReminderRequest dto) {
@@ -86,20 +89,22 @@ public class ReminderServiceImpl implements IReminderService {
     }
 
     @Override
+    @Transactional
     public ApiResponse<ReminderResponse> updateReminder(UpdateReminderRequest dto) {
-        // Find current user
+        // 1. Tìm user và reminder như hiện tại
         UserEntity currentUser = userRepository.findOne(
                 UserSpecification.hasEmail(AuthUtils.getUserCurrent())
         ).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
-        // Build specification
-        Specification<ReminderEntity> spec = ReminderSpecification.hasId(dto.getId())
-                .and(ReminderSpecification.hasUserId(currentUser.getId()));
+        ReminderEntity existing = reminderRepository.findOne(
+                (ReminderSpecification.hasId(dto.getId()))
+                        .and(ReminderSpecification.hasUserId(currentUser.getId()))
+        ).orElseThrow(() -> new CustomRuntimeException(ErrorCode.REMINDER_NOT_FOUND));
 
-        ReminderEntity existing = reminderRepository.findOne(spec)
-                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.REMINDER_NOT_FOUND));
+        // 2. Lưu lại status cũ để so sánh
+        ReminderStatus oldStatus = existing.getStatus();
 
-        // Map non-null fields from DTO
+        // 3. Map các trường từ DTO
         mapper.updateEntity(dto, existing);
         if (dto.getActionType() != null) existing.setActionType(ActionType.valueOf(dto.getActionType()));
         if (dto.getScheduleType() != null) existing.setScheduleType(ScheduleType.valueOf(dto.getScheduleType()));
@@ -109,11 +114,23 @@ public class ReminderServiceImpl implements IReminderService {
         if (dto.getDayOfMonth() != null) existing.setDayOfMonth(dto.getDayOfMonth());
         if (dto.getStatus() != null) existing.setStatus(dto.getStatus());
 
+        // 4. Persist reminder
         ReminderEntity updated = reminderRepository.save(existing);
+
+        // 5. Nếu status mới là DONE hoặc SKIPPED, và khác status cũ, sinh log
+        ReminderStatus newStatus = updated.getStatus();
+        if (newStatus != oldStatus) {
+            if (newStatus == ReminderStatus.DONE || newStatus == ReminderStatus.SKIPPED) {
+                gardenLogService.recordFromReminder(updated);
+            }
+        }
+
+        // 6. Trả về response
         return ApiResponse.<ReminderResponse>builder()
                 .result(mapper.toResponse(updated))
                 .build();
     }
+
 
     @Override
     public ApiResponse<Void> deleteReminder(String reminderId) {

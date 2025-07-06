@@ -72,7 +72,8 @@ public class SecurityConfig {
             "/api/likes/post/*",
             "/api/likes/*",
             // post
-            "/api/post"
+            "/api/post",
+            "/api/garden-logs"
     };
 
     static final String[] USER_POST_ENDPOINT = {

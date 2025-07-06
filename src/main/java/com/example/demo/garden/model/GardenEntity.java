@@ -3,6 +3,7 @@ package com.example.demo.garden.model;
 import com.example.demo.common.BaseEntity;
 
 import com.example.demo.common.enums.GardenCondition;
+import com.example.demo.gardenHealth.model.GardenHealthEntity;
 import com.example.demo.gardenLog.model.GardenLogEntity;
 import com.example.demo.gardenNote.model.GardenNoteEntity;
 import com.example.demo.gardencell.model.GardenCellEntity;
@@ -71,6 +72,9 @@ public class GardenEntity extends BaseEntity {
     List<GardenNoteEntity> notes = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<GardenHealthEntity> gardenHealths = new ArrayList<>();
 
     // Một vườn có nhiều gợi ý AI
     @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
