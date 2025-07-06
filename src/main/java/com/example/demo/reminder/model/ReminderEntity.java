@@ -3,6 +3,7 @@ package com.example.demo.reminder.model;
 import com.example.demo.common.BaseEntity;
 import com.example.demo.common.enums.*;
 import com.example.demo.garden.model.GardenEntity;
+import com.example.demo.gardenLog.model.GardenLogEntity;
 import com.example.demo.notification.model.NotificationEntity;
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -78,6 +79,10 @@ public class ReminderEntity extends BaseEntity {
     @JsonBackReference
     GardenEntity garden;
 
+
+    @OneToMany(mappedBy = "reminder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    List<GardenLogEntity> gardenLogs = new ArrayList<>();
 
     @OneToMany(mappedBy = "reminder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
