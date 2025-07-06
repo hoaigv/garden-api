@@ -48,10 +48,8 @@ public class SecurityConfig {
             // Plant Inventories
             "/api/plant-inventories/me",
             // Reminders
-            "/api/reminders",
-            "/api/reminders/*/me",
-            "/api/reminders/me",
-            "/api/reminders/*",
+            "/api/reminders",        // list + filter
+            "/api/reminders/*",      // get by id
             // Garden Notes
             "/api/garden-notes",
             "/api/garden-notes/me",
@@ -73,7 +71,7 @@ public class SecurityConfig {
             "/api/likes/me",
             "/api/likes/post/*",
             "/api/likes/*",
-            //post
+            // post
             "/api/post"
     };
 
@@ -112,7 +110,7 @@ public class SecurityConfig {
             // Change own password
             "/api/me/password",
             // Reminders
-            "/api/reminders",
+            "/api/reminders/*",  // update by id
             // Garden Notes
             "/api/garden-notes",
             // Chatbot Sessions
@@ -133,7 +131,7 @@ public class SecurityConfig {
             // Plant Inventories
             "/api/plant-inventories",
             // Reminders
-            "/api/reminders",
+            "/api/reminders/*",  // delete by id
             // Garden Notes
             "/api/garden-notes",
             // Chatbot Sessions

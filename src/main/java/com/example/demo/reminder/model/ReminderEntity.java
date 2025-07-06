@@ -1,10 +1,9 @@
 package com.example.demo.reminder.model;
 
 import com.example.demo.common.BaseEntity;
-import com.example.demo.common.enums.FrequencyType;
-import com.example.demo.common.enums.ReminderStatus;
+import com.example.demo.common.enums.*;
 import com.example.demo.garden.model.GardenEntity;
-import com.example.demo.gardenLog.model.GardenLogEntity;
+import com.example.demo.notification.model.NotificationEntity;
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -14,8 +13,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "reminders")
 @Table(name = "reminders")
@@ -29,21 +29,44 @@ import java.util.Set;
 public class ReminderEntity extends BaseEntity {
 
     @Column(nullable = false, length = 100)
-    String task;   // tên hoạt động, ví dụ: "Tưới nước"
+    String title;   // tên hoạt động, ví dụ: "Tưới nước"
 
-    @Column
-    String garden_activity;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    ActionType actionType;   // loại hành động (ví dụ: WATERING, PRUNING, ...)
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    ScheduleType scheduleType;
+
+    // Nếu FIXED
     @Column
-    LocalDateTime specificTime;  // thời gian cụ thể nếu áp dụng một lần
+    private LocalDateTime fixedDateTime;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     FrequencyType frequency;    // tần suất: DAILY, WEEKLY, etc.
 
+
+    // time of day for  RECURRING
+    @Column
+    LocalTime timeOfDay;
+
+    // Chỉ dùng cho WEEKLY: danh sách ngày trong tuần
+    @ElementCollection(targetClass = WeekDay.class)
+    @CollectionTable
+    @Column(length = 10)
+    @Enumerated(EnumType.STRING)
+    private List<WeekDay> daysOfWeek;
+
+    // Chỉ dùng cho MONTHLY: 1..31 hoặc -1 (cuối tháng)
+    @Column
+    private Integer dayOfMonth;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     ReminderStatus status; // PENDING | DONE | SKIPPED
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -55,7 +78,8 @@ public class ReminderEntity extends BaseEntity {
     @JsonBackReference
     GardenEntity garden;
 
+
     @OneToMany(mappedBy = "reminder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
-    Set<GardenLogEntity> gardenLogs = new HashSet<>();
+    List<NotificationEntity> notifications = new ArrayList<>();
 }

@@ -1,7 +1,7 @@
+// src/main/java/com/example/demo/reminder/controllers/ReminderController.java
 package com.example.demo.reminder.controllers;
 
 import com.example.demo.common.ApiResponse;
-import com.example.demo.common.annotation.positiveOrDefault.PositiveOrDefault;
 import com.example.demo.reminder.controllers.dtos.CreateReminderRequest;
 import com.example.demo.reminder.controllers.dtos.ReminderResponse;
 import com.example.demo.reminder.controllers.dtos.UpdateReminderRequest;
@@ -24,87 +24,59 @@ public class ReminderController {
     IReminderService reminderService;
 
     /**
-     * Get paged list of reminders with optional filters.
+     * Lấy danh sách reminders, có thể filter theo gardenId
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<ReminderResponse>>> findAll(
-            @PositiveOrDefault int page,
-            @PositiveOrDefault(defaultValue = 10) int size,
-            @RequestParam(required = false) String gardenId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String frequency,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir
+            @RequestParam(required = false) String gardenId
     ) {
-        ApiResponse<List<ReminderResponse>> response = reminderService.findAll(
-                page, size, gardenId, status, frequency, sortBy, sortDir
-        );
+        ApiResponse<List<ReminderResponse>> response = reminderService.getReminders(gardenId);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get all reminders for the current authenticated user for each garden.
-     */
-    @GetMapping("{gardenId}/me")
-    public ResponseEntity<ApiResponse<List<ReminderResponse>>> findAllForCurrentUser(
-            @PathVariable String gardenId
-    ) {
-        ApiResponse<List<ReminderResponse>> response = reminderService.findAllForCurrentUser(gardenId);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Get all reminders for the current authenticated user.
-     */
-    @GetMapping("/me")
-    public ResponseEntity<ApiResponse<List<ReminderResponse>>> findAllForCurrentUser() {
-        ApiResponse<List<ReminderResponse>> response = reminderService.findAllForUser();
-        return ResponseEntity.ok(response);
-    }
-
-
-    /**
-     * Get all reminders for the current authenticated user.
-     */
-    @GetMapping("/{reminderId}")
-    public ResponseEntity<ApiResponse<ReminderResponse>> findOneById(
+    @GetMapping("{reminderId}")
+    public ResponseEntity<ApiResponse<ReminderResponse>> findBYId(
             @PathVariable String reminderId
+
     ) {
-        var response = reminderService.findReminderById(reminderId);
+        var response = reminderService.getReminder(reminderId);
         return ResponseEntity.ok(response);
     }
 
 
     /**
-     * Create a new reminder.
+     * Tạo mới reminder
      */
     @PostMapping
-    public ResponseEntity<ApiResponse<Void>> createReminder(
+    public ResponseEntity<ApiResponse<ReminderResponse>> createReminder(
             @RequestBody @Valid CreateReminderRequest request
     ) {
-        ApiResponse<Void> response = reminderService.createReminder(request);
+        ApiResponse<ReminderResponse> response = reminderService.createReminder(request);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Update an existing reminder.
+     * Cập nhật reminder theo id
      */
-    @PutMapping
-    public ResponseEntity<ApiResponse<Void>> updateReminder(
+    @PutMapping("/{reminderId}")
+    public ResponseEntity<ApiResponse<ReminderResponse>> updateReminder(
+            @PathVariable String reminderId,
             @RequestBody @Valid UpdateReminderRequest request
     ) {
-        ApiResponse<Void> response = reminderService.updateReminder(request);
+        // đảm bảo id path khớp id trong body
+        request.setId(reminderId);
+        ApiResponse<ReminderResponse> response = reminderService.updateReminder(request);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * Delete one or more reminders by ID.
+     * Xóa (soft-delete) reminder theo id
      */
-    @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteReminders(
-            @RequestBody @Valid List<String> reminderIds
+    @DeleteMapping("/{reminderId}")
+    public ResponseEntity<ApiResponse<Void>> deleteReminder(
+            @PathVariable String reminderId
     ) {
-        ApiResponse<Void> response = reminderService.deleteReminders(reminderIds);
+        ApiResponse<Void> response = reminderService.deleteReminder(reminderId);
         return ResponseEntity.ok(response);
     }
 }

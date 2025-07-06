@@ -42,9 +42,4 @@ public class GardenLogEntity extends BaseEntity {
     GardenEntity garden;
 
 
-    // Liên kết đến Reminder gốc (nếu log phát sinh từ Reminder)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    @JsonBackReference
-    ReminderEntity reminder;
 }

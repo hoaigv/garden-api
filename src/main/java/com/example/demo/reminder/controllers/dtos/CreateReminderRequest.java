@@ -1,12 +1,17 @@
-// src/main/java/com/example/demo/reminder/controller/dtos/CreateReminderRequest.java
+// src/main/java/com/example/demo/reminder/controllers/dtos/CreateReminderRequest.java
 package com.example.demo.reminder.controllers.dtos;
 
+import com.example.demo.common.enums.FrequencyType;
 import com.example.demo.common.enums.ReminderStatus;
+import com.example.demo.common.enums.ScheduleType;
+import com.example.demo.common.enums.WeekDay;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -15,32 +20,48 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateReminderRequest {
 
-    @NotBlank(message = "Task must not be blank")
-    @Size(max = 100, message = "Task must be at most 100 characters")
-    String task;
+    @NotBlank(message = "Title must not be blank")
+    @Size(max = 100, message = "Title at most 100 characters")
+    String title;
 
-    @NotBlank(message = "GardenActivity must not be blank")
+    @NotBlank(message = "ActionType must not be blank")
     @Pattern(
-            regexp = "^(WATERING|FERTILIZING|PRUNING|PEST_CHECK|HARVESTING|SEEDING|TRANSPLANTING|SOIL_CHECK|WEEDING|OTHER)$",
-            message = "GardenActivity must be one of: WATERING, FERTILIZING, PRUNING, PEST_CHECK, HARVESTING, SEEDING, TRANSPLANTING, SOIL_CHECK, WEEDING, OTHER"
+            regexp = "^(WATERING|PRUNING|FERTILIZING|PEST_CHECK|HARVESTING|SEEDING|TRANSPLANTING|SOIL_CHECK|WEEDING|OTHER)$",
+            message = "ActionType must be one of the enum values"
     )
-    String gardenActivity;
+    String actionType;
 
-
-    // Thời gian cụ thể (nullable nếu lặp)
-    LocalDateTime specificTime;
-
-    @NotBlank(message = "Frequency must not be blank")
+    @NotBlank(message = "ScheduleType must not be blank")
     @Pattern(
-            regexp = "ONE_TIME|DAILY|WEEKLY|MONTHLY",
-            message = "Frequency must be one of: ONE_TIME, DAILY, WEEKLY, MONTHLY"
+            regexp = "^(FIXED|RECURRING)$",
+            message = "ScheduleType must be FIXED or RECURRING"
+    )
+    String scheduleType;
+
+    // chỉ dùng khi FIXED
+    LocalDateTime fixedDateTime;
+
+    // chỉ dùng khi RECURRING
+    @Pattern(
+            regexp = "^(ONE_TIME|DAILY|WEEKLY|MONTHLY)$",
+            message = "Frequency must be ONE_TIME, DAILY, WEEKLY or MONTHLY"
     )
     String frequency;
 
+    // chỉ dùng khi RECURRING
+    LocalTime timeOfDay;
+
+    // chỉ dùng khi WEEKLY
+    List<WeekDay> daysOfWeek;
+
+    // chỉ dùng khi MONTHLY (1–31 hoặc -1)
+    Integer dayOfMonth;
 
     @NotNull(message = "Status must not be null")
     ReminderStatus status;
 
     @NotBlank(message = "Garden ID must not be blank")
     String gardenId;
+
+
 }

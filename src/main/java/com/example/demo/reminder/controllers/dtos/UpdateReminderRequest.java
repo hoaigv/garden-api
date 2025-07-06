@@ -1,4 +1,4 @@
-// src/main/java/com/example/demo/reminder/controller/dtos/UpdateReminderRequest.java
+// src/main/java/com/example/demo/reminder/controllers/dtos/UpdateReminderRequest.java
 package com.example.demo.reminder.controllers.dtos;
 
 import com.example.demo.common.enums.ReminderStatus;
@@ -7,6 +7,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import com.example.demo.common.enums.WeekDay;
 
 @Data
 @Builder
@@ -15,33 +19,39 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateReminderRequest {
 
-    @NotBlank(message = "Reminder ID must not be blank")
+
     String id;
 
-    @NotBlank(message = "Task must not be blank")
-    @Size(max = 100, message = "Task must be at most 100 characters")
-    String task;
+    @Size(max = 100, message = "Title at most 100 characters")
+    String title;
 
-    @NotBlank(message = "GardenActivity must not be blank")
     @Pattern(
-            regexp = "^(WATERING|FERTILIZING|PRUNING|PEST_CHECK|HARVESTING|SEEDING|TRANSPLANTING|SOIL_CHECK|WEEDING|OTHER)$",
-            message = "GardenActivity must be one of: WATERING, FERTILIZING, PRUNING, PEST_CHECK, HARVESTING, SEEDING, TRANSPLANTING, SOIL_CHECK, WEEDING, OTHER"
+            regexp = "^(WATERING|PRUNING|FERTILIZING|PEST_CHECK|HARVESTING|SEEDING|TRANSPLANTING|SOIL_CHECK|WEEDING|OTHER)$",
+            message = "ActionType must be one of the enum values"
     )
-    String gardenActivity;
+    String actionType;
 
-
-    LocalDateTime specificTime;
-
-    @NotBlank(message = "Frequency must not be blank")
     @Pattern(
-            regexp = "ONE_TIME|DAILY|WEEKLY|MONTHLY",
-            message = "Frequency must be one of: ONE_TIME, DAILY, WEEKLY, MONTHLY"
+            regexp = "^(FIXED|RECURRING)$",
+            message = "ScheduleType must be FIXED or RECURRING"
+    )
+    String scheduleType;
+
+    LocalDateTime fixedDateTime;
+
+    @Pattern(
+            regexp = "^(ONE_TIME|DAILY|WEEKLY|MONTHLY)$",
+            message = "Frequency must be ONE_TIME, DAILY, WEEKLY or MONTHLY"
     )
     String frequency;
 
-    @NotNull(message = "Status must not be null")
+    LocalTime timeOfDay;
+
+    List<WeekDay> daysOfWeek;
+
+    Integer dayOfMonth;
+
     ReminderStatus status;
 
-    @NotBlank(message = "Garden ID must not be blank")
     String gardenId;
 }

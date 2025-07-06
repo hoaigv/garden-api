@@ -27,11 +27,13 @@ public enum ErrorCode {
     INVALID_ARGUMENT("Invalid argument.", HttpStatus.BAD_REQUEST),
 
     // Inventory
-    INSUFFICIENT_QUANTITY("Insufficient quantity seedling ! ", HttpStatus.BAD_REQUEST);
+    INSUFFICIENT_QUANTITY("Insufficient quantity seedling ! ", HttpStatus.BAD_REQUEST),
+
+    // Reminder service errors
+    REMINDER_NOT_FOUND("Reminder not found.", HttpStatus.NOT_FOUND);
 
     private final String message;
     private final HttpStatus statusCode;
-
 
     public int getCode() {
         return statusCode.value();

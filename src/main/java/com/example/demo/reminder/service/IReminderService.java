@@ -1,3 +1,4 @@
+// src/main/java/com/example/demo/reminder/service/IReminderService.java
 package com.example.demo.reminder.service;
 
 import com.example.demo.common.ApiResponse;
@@ -7,60 +8,40 @@ import com.example.demo.reminder.controllers.dtos.ReminderResponse;
 
 import java.util.List;
 
-/**
- * Service interface for managing Reminder entities.
- */
 public interface IReminderService {
 
     /**
-     * Retrieve a paged and optionally filtered list of reminders.
+     * Tạo mới một Reminder cho user hiện tại.
      *
-     * @param page      zero-based page index
-     * @param size      page size
-     * @param gardenId  optional garden ID filter
-     * @param status    optional reminder status filter
-     * @param frequency optional frequency filter (ONE_TIME, DAILY, WEEKLY, MONTHLY)
-     * @param sortBy    field to sort by
-     * @param sortDir   sort direction ("asc" or "desc")
+     * @param dto thông tin để tạo reminder
+     * @return ApiResponse chứa ReminderResponse vừa tạo
      */
-    ApiResponse<List<ReminderResponse>> findAll(
-            Integer page,
-            Integer size,
-            String gardenId,
-            String status,
-            String frequency,
-            String sortBy,
-            String sortDir
-    );
+    ApiResponse<ReminderResponse> createReminder(CreateReminderRequest dto);
 
     /**
-     * Retrieve the full list of reminders for the currently authenticated user.
+     * Cập nhật một Reminder đã tồn tại (chỉ cập nhật các trường không-null trong DTO).
      *
-     * @return ApiResponse containing list of ReminderResponse for current user
+     * @param dto chứa id và các trường cần thay đổi
+     * @return ApiResponse chứa ReminderResponse sau khi cập nhật
      */
-    ApiResponse<List<ReminderResponse>> findAllForCurrentUser(String gardenId);
+    ApiResponse<ReminderResponse> updateReminder(UpdateReminderRequest dto);
+
     /**
-     * Retrieve the full list of reminders for the currently authenticated user.
+     * Xóa (soft-delete) một Reminder theo id.
      *
-     * @return ApiResponse containing list of ReminderResponse for current user
+     * @param reminderId id của reminder cần xóa
+     * @return ApiResponse không có payload
      */
-    ApiResponse<List<ReminderResponse>> findAllForUser();
+    ApiResponse<Void> deleteReminder(String reminderId);
 
     /**
-     * Create a new reminder entry.
+     * Lấy danh sách Reminder của user hiện tại, theo gardenId nếu có.
+     *
+     * @param gardenId (optional) id của vườn để lọc
+     * @return ApiResponse chứa danh sách ReminderResponse
      */
-    ApiResponse<Void> createReminder(CreateReminderRequest request);
-
-    /**
-     * Update an existing reminder entry.
-     */
-    ApiResponse<Void> updateReminder(UpdateReminderRequest request);
-
-    /**
-     * Delete one or more reminders by ID.
-     */
-    ApiResponse<Void> deleteReminders(List<String> reminderIds);
+    ApiResponse<List<ReminderResponse>> getReminders(String gardenId);
 
 
-    ApiResponse<ReminderResponse> findReminderById (String reminderId);
+    ApiResponse<ReminderResponse> getReminder(String reminderId);
 }

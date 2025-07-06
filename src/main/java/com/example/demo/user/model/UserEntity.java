@@ -8,6 +8,7 @@ import com.example.demo.community.post.model.CommunityPostEntity;
 
 
 import com.example.demo.garden.model.GardenEntity;
+import com.example.demo.notification.model.NotificationEntity;
 import com.example.demo.reminder.model.ReminderEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -87,7 +88,10 @@ public class UserEntity extends BaseEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     List<CommentEntity> comments = new ArrayList<>();
-
+    // Một user có nhiều bình luận
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    List<NotificationEntity> notifications = new ArrayList<>();
     // Một user có nhiều phiên chat với chatbot
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference

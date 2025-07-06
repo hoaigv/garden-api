@@ -1,49 +1,37 @@
 package com.example.demo.reminder.mapper;
 
+import com.example.demo.reminder.model.ReminderEntity;
 import com.example.demo.reminder.controllers.dtos.CreateReminderRequest;
 import com.example.demo.reminder.controllers.dtos.UpdateReminderRequest;
 import com.example.demo.reminder.controllers.dtos.ReminderResponse;
-import com.example.demo.reminder.model.ReminderEntity;
-import com.example.demo.common.enums.FrequencyType;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring")
+import java.util.List;
+
+@Mapper(componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface IReminderMapper {
 
-
-    @Mapping(source = "gardenActivity", target = "garden_activity")
-    @Mapping(source = "frequency", target = "frequency", qualifiedByName = "stringToFrequencyType")
-    @Mapping(target = "status", source = "status")
+    /**
+     * Map trực tiếp các trường giống tên. Các trường enum sẽ được set thủ công trong service.
+     */
 
     ReminderEntity toEntity(CreateReminderRequest dto);
 
-    @Mapping(source = "task", target = "task")
-    @Mapping(source = "gardenActivity", target = "garden_activity")
-    @Mapping(source = "specificTime", target = "specificTime")
-    @Mapping(source = "frequency", target = "frequency", qualifiedByName = "stringToFrequencyType")
-    @Mapping(source = "status", target = "status")
+    /**
+     * Cập nhật một ReminderEntity đã có sẵn.
+     * Bỏ qua các trường null trong DTO (nullValuePropertyMappingStrategy = IGNORE).
+     */
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "garden.id", source = "dto.gardenId")
+    void updateEntity(UpdateReminderRequest dto, @MappingTarget ReminderEntity existing);
 
-    void updateEntity(UpdateReminderRequest dto, @MappingTarget ReminderEntity entity);
-
-    @Mapping(source = "garden_activity", target = "gardenActivity")
-    @Mapping(source = "frequency", target = "frequency", qualifiedByName = "frequencyTypeToString")
-    @Mapping(source = "status", target = "status")
-    @Mapping(source = "garden.id", target = "gardenId")
-    @Mapping(source = "id", target = "id")
-    @Mapping(source = "task", target = "task")
-    @Mapping(source = "specificTime", target = "specificTime")
-    @Mapping(source = "createdAt", target = "createdAt")
-    @Mapping(source = "updatedAt", target = "updatedAt")
+    @Mapping(target = "gardenId", source = "garden.id")
+    @Mapping(target = "gardenName" ,source ="garden.name")
     ReminderResponse toResponse(ReminderEntity entity);
 
-    @Named("stringToFrequencyType")
-    default FrequencyType stringToFrequencyType(String value) {
-        return value != null ? FrequencyType.valueOf(value) : null;
-    }
-
-    @Named("frequencyTypeToString")
-    default String frequencyTypeToString(FrequencyType type) {
-        return type != null ? type.name() : null;
-    }
+    /**
+     * Chuyển một list entity sang list response.
+     */
+    List<ReminderResponse> toResponseList(List<ReminderEntity> entities);
 }
-
