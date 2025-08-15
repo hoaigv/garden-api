@@ -23,12 +23,10 @@ public class GardenCellController {
 
     @GetMapping("/cells")
     public ResponseEntity<ApiResponse<GardenCellsViewResponse>> findAll(
-            @RequestParam String gardenId,
-            @RequestParam(required = false) String plantInventoryId,
-            @RequestParam(required = false) String status
+            @RequestParam String gardenId
     ) {
         ApiResponse<GardenCellsViewResponse> response = gardenCellService.findAll(
-                gardenId, plantInventoryId, status
+                gardenId
         );
         return ResponseEntity.ok(response);
     }

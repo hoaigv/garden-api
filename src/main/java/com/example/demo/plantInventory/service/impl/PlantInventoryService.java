@@ -11,6 +11,9 @@ import com.example.demo.plantInventory.model.PlantInventoryEntity;
 import com.example.demo.plantInventory.repository.PlantInventoryRepository;
 import com.example.demo.plantInventory.repository.PlantInventorySpecification;
 import com.example.demo.plantInventory.service.IPlantInventoryService;
+import com.example.demo.plantVariety.mapper.IPlantVarietyMapper;
+import com.example.demo.plantVariety.repository.IPlantVarietyRepository;
+import com.example.demo.plantVariety.repository.PlantVarietySpecification;
 import com.example.demo.user.repository.IUserRepository;
 import com.example.demo.user.repository.UserSpecification;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,35 +38,23 @@ public class PlantInventoryService implements IPlantInventoryService {
     PlantInventoryRepository inventoryRepository;
     IPlantInventoryMapper inventoryMapper;
     IUserRepository userRepository;
+    IPlantVarietyRepository plantVarietyRepository;
+    IPlantVarietyMapper plantVarietyMapper;
 
     @Override
     public ApiResponse<List<PlantInventoryAdminResponse>> findAll(
             Integer page,
             Integer size,
             String userId,
-            String plantType,
             String sortBy,
             String sortDir
     ) {
         // build specification
         PlantTypeEnum typeEnum = null;
-        if (plantType != null && !plantType.isBlank()) {
-            try {
-                typeEnum = PlantTypeEnum.valueOf(plantType);
-            } catch (IllegalArgumentException e) {
-                throw new CustomRuntimeException(ErrorCode.INVALID_ARGUMENT);
-            }
-        }
 
         Specification<PlantInventoryEntity> spec = PlantInventorySpecification.build(
                 null,
-                userId,
-                typeEnum,
-                null,
-                null,
-                null,
-                null,
-                plantType
+                userId
         );
 
 
@@ -99,14 +91,17 @@ public class PlantInventoryService implements IPlantInventoryService {
         ).orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
 
         // Query tất cả plant inventories của user này
-        List<PlantInventoryResponse> dtos = inventoryRepository
-                .findAll(PlantInventorySpecification.hasUserId(currentUser.getId()))
-                .stream()
-                .map(inventoryMapper::entityToResponse)
-                .collect(Collectors.toList());
+        List<PlantInventoryResponse> dtos = new ArrayList<>();
+        for (PlantInventoryEntity plantInventoryEntity : inventoryRepository
+                .findAll(PlantInventorySpecification.hasUserId(currentUser.getId()))) {
+            var plantInventoryResponse = inventoryMapper.entityToResponse(plantInventoryEntity);
+            var variety = plantVarietyRepository.findOne(PlantVarietySpecification.hasId(plantInventoryEntity.getPlantVariety().getId()))
+                    .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
+            plantInventoryResponse.setPlantVariety(plantVarietyMapper.entityToResponse(variety));
+            dtos.add(plantInventoryResponse);
+        }
 
         return ApiResponse.<List<PlantInventoryResponse>>builder()
-                .message("Fetched plant inventories for current user")
                 .result(dtos)
                 .build();
     }
@@ -117,7 +112,15 @@ public class PlantInventoryService implements IPlantInventoryService {
         // verify user exists
         var user = userRepository.findOne(UserSpecification.hasEmail(AuthUtils.getUserCurrent()))
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
-        PlantInventoryEntity entity = inventoryMapper.createRequestToEntity(request);
+        var variety = plantVarietyRepository.findOne(PlantVarietySpecification.hasId(request.getVarietyId()))
+                .orElseThrow();
+
+
+        var entity = PlantInventoryEntity.builder()
+                .numberOfVariety(request.getNumberOfVariety())
+                .plantVariety(variety)
+                .user(user)
+                .build();
         entity.setUser(user);
         inventoryRepository.save(entity);
         return ApiResponse.<Void>builder()

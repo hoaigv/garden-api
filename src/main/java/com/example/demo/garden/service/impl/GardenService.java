@@ -134,6 +134,7 @@ public class GardenService implements IGardenService {
                 .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
         entity.setUser(user);
         entity.setGardenCondition(GardenCondition.NORMAL);
+        entity.setTotalCell(entity.getColLength() * entity.getRowLength());
         entity = gardenRepository.save(entity);
         GardenResponse response = gardenMapper.entityToResponse(entity);
         return ApiResponse.<GardenResponse>builder()

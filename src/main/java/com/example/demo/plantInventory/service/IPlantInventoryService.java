@@ -13,18 +13,16 @@ public interface IPlantInventoryService {
     /**
      * Retrieve a paged and filtered list of plant inventories.
      *
-     * @param page      zero-based page index
-     * @param size      page size
-     * @param userId    optional owner user ID filter
-     * @param plantType optional plant type enum filter
-     * @param sortBy    field to sort by
-     * @param sortDir   sort direction ("asc" or "desc")
+     * @param page    zero-based page index
+     * @param size    page size
+     * @param userId  optional owner user ID filter
+     * @param sortBy  field to sort by
+     * @param sortDir sort direction ("asc" or "desc")
      */
     ApiResponse<List<PlantInventoryAdminResponse>> findAll(
             Integer page,
             Integer size,
             String userId,
-            String plantType,
             String sortBy,
             String sortDir
     );

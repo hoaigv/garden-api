@@ -30,8 +30,11 @@ public enum ErrorCode {
     INSUFFICIENT_QUANTITY("Insufficient quantity seedling ! ", HttpStatus.BAD_REQUEST),
 
     // Reminder service errors
-    REMINDER_NOT_FOUND("Reminder not found.", HttpStatus.NOT_FOUND);
+    REMINDER_NOT_FOUND("Reminder not found.", HttpStatus.NOT_FOUND),
 
+    // Variety
+    STAGE_ORDER_ALREADY_EXISTS("Stage order already exists.",HttpStatus.BAD_REQUEST),
+    BAD_REQUEST("Bad request ",HttpStatus.BAD_REQUEST);
     private final String message;
     private final HttpStatus statusCode;
 

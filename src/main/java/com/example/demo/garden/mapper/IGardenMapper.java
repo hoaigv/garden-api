@@ -21,7 +21,7 @@ public interface IGardenMapper {
     @Mapping(target = "logs", ignore = true)
     @Mapping(target = "reminders", ignore = true)
     @Mapping(target = "notes", ignore = true)
-    @Mapping(target = "aiSuggestions", ignore = true)
+
     GardenEntity createRequestToEntity(CreateGardenRequest request);
 
 //    /**
@@ -42,14 +42,13 @@ public interface IGardenMapper {
     @Mapping(target = "logs", ignore = true)
     @Mapping(target = "reminders", ignore = true)
     @Mapping(target = "notes", ignore = true)
-    @Mapping(target = "aiSuggestions", ignore = true)
     void updateEntityFromRequest(UpdateGardenRequest request, @MappingTarget GardenEntity entity);
 
     /**
      * Map single GardenEntity to GardenResponse (for GET operations).
      * Count relations for summary.
      */
-    @Mapping(target = "userId", expression = "java(entity.getUser().getId())")
+
     GardenResponse entityToResponse(GardenEntity entity);
 
     /**

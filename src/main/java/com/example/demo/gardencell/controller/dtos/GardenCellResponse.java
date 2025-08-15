@@ -1,8 +1,12 @@
 package com.example.demo.gardencell.controller.dtos;
 
 import com.example.demo.common.enums.HealthStatus;
+import com.example.demo.plantStage.controller.dtos.PlantStageResponse;
+import com.example.demo.plantVariety.controller.dtos.PlantVarietyResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -15,7 +19,10 @@ public class GardenCellResponse {
     Integer colIndex;
     Short quantity;
     HealthStatus healthStatus;
-
-    String plantInventoryId;   // ID of the plant type
-    String icon;      // URL or base64 of the plant image
+    String diseaseName;
+    PlantVarietyResponse plantVariety;
+    String stageLink;
+    String stageGrow;
+    LocalDateTime createdAt;
+    String imgCellCurrent;
 }

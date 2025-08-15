@@ -31,7 +31,7 @@ public class PostController {
             @PositiveOrDefault int page,
             @PositiveOrDefault(defaultValue = 10) int size,
             @RequestParam(required = false) String userId,
-
+            @RequestParam(required = false) String body,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdFrom,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime createdTo,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -39,7 +39,7 @@ public class PostController {
     ) {
 
         var response = postService.findAll(
-                page, size, userId, createdFrom, createdTo, sortBy, sortDir
+                page, size, userId,body, createdFrom, createdTo, sortBy, sortDir
         );
         return ResponseEntity.ok(response);
     }

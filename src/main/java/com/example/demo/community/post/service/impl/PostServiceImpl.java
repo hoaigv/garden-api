@@ -2,6 +2,7 @@ package com.example.demo.community.post.service.impl;
 
 import com.example.demo.common.ApiResponse;
 import com.example.demo.common.AuthUtils;
+import com.example.demo.common.enums.Role;
 import com.example.demo.community.comment.repository.CommentSpecification;
 import com.example.demo.community.comment.repository.ICommentRepository;
 import com.example.demo.community.like.repository.LikeRepository;
@@ -51,13 +52,20 @@ public class PostServiceImpl implements IPostService {
             Integer page,
             Integer size,
             String userId,
+            String body,
             LocalDateTime createdFrom,
             LocalDateTime createdTo,
             String sortBy,
             String sortDir
     ) {
+        boolean isNotDelete = false;
+        var user = userRepository.findOne(UserSpecification.hasEmail(AuthUtils.getUserCurrent()))
+                .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
+        if (user.getRole().equals(Role.USER)) {
+            isNotDelete = true;
+        }
         Specification<CommunityPostEntity> spec = PostSpecification.build(
-                null, userId, createdFrom, createdTo
+                null, userId, body, isNotDelete, createdFrom, createdTo
         );
         Sort.Direction dir = "asc".equalsIgnoreCase(sortDir) ? Sort.Direction.ASC : Sort.Direction.DESC;
         Pageable pageable = PageRequest.of(page, size, Sort.by(dir, sortBy));
@@ -200,11 +208,12 @@ public class PostServiceImpl implements IPostService {
                     .orElseThrow(() -> new CustomRuntimeException(ErrorCode.RESOURCE_NOT_FOUND));
             if (entity.getDeletedAt() == null) {
                 entity.setDeletedAt(LocalDateTime.now());
-                postRepository.save(entity);
+
             } else {
                 entity.setDeletedAt(null);
-                postRepository.save(entity);
+
             }
+            postRepository.save(entity);
         }
         return ApiResponse.<Void>builder()
                 .message("Posts deleted successfully")
