@@ -32,9 +32,11 @@ public class PostSpecification {
     public static Specification<CommunityPostEntity> createdBefore(LocalDateTime to) {
         return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("createdAt"), to);
     }
+
     public static Specification<CommunityPostEntity> isNotDelete() {
         return (root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get("deletedAt"));
     }
+
     /**
      * Filter posts having comments (commentList not empty) or no comments
      */
@@ -50,7 +52,7 @@ public class PostSpecification {
      */
     public static Specification<CommunityPostEntity> hasLikes(boolean isLike) {
         return (root, query, cb) -> {
-       Expression<Integer> size = cb.size(root.get("likes"));
+            Expression<Integer> size = cb.size(root.get("likes"));
             return isLike ? cb.greaterThan(size, 0) : cb.equal(size, 0);
         };
     }
@@ -87,6 +89,8 @@ public class PostSpecification {
     public static Specification<CommunityPostEntity> build(
             String id,
             String userId,
+            String body,
+            boolean isNotDeleted ,
             LocalDateTime createdFrom,
             LocalDateTime createdTo
     ) {
@@ -95,6 +99,14 @@ public class PostSpecification {
         if (id != null && !id.isBlank()) {
             spec = spec.and(hasId(id));
         }
+        if (body != null && !body.isBlank()) {
+            spec = spec.and(bodyLike(body));
+        }
+
+        if(isNotDeleted){
+            spec = spec.and(isNotDelete());
+        }
+
         if (userId != null && !userId.isBlank()) {
             spec = spec.and(hasUserId(userId));
         }

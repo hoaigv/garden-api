@@ -8,7 +8,7 @@ import com.example.demo.gardenLog.model.GardenLogEntity;
 import com.example.demo.gardenNote.model.GardenNoteEntity;
 import com.example.demo.gardencell.model.GardenCellEntity;
 import com.example.demo.reminder.model.ReminderEntity;
-import com.example.demo.suggestion.model.AIGardenSuggestionEntity;
+
 import com.example.demo.user.model.UserEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -39,6 +39,12 @@ public class GardenEntity extends BaseEntity {
 
     @Column(nullable = false)
     Integer colLength;
+
+    @Column(nullable = false)
+    Integer totalCell = 0;
+
+    @Column(nullable = false)
+    String soil;
 
     // Tình trạng toàn khu vườn
     @Enumerated(EnumType.STRING)
@@ -76,8 +82,4 @@ public class GardenEntity extends BaseEntity {
     @JsonManagedReference
     List<GardenHealthEntity> gardenHealths = new ArrayList<>();
 
-    // Một vườn có nhiều gợi ý AI
-    @OneToMany(mappedBy = "garden", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    List<AIGardenSuggestionEntity> aiSuggestions = new ArrayList<>();
 }

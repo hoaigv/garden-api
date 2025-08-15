@@ -11,13 +11,11 @@ public interface IGardenCellService {
      * Query and return a paged/filtered view of cells for a garden.
      *
      * @param gardenId         ID of the garden to view
-     * @param plantInventoryId Optional filter by plant type ID
-     * @param status           Optional filter by health status
+
      */
     ApiResponse<GardenCellsViewResponse> findAll(
-            String gardenId,
-            String plantInventoryId,
-            String status
+            String gardenId
+
     );
 
     ApiResponse<GardenCellsAdminResponse> adminFindAll(

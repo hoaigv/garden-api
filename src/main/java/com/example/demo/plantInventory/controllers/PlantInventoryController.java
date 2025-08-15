@@ -29,12 +29,12 @@ public class PlantInventoryController {
             @PositiveOrDefault int page,
             @PositiveOrDefault(defaultValue = 10) int size,
             @RequestParam(required = false) String userId,
-            @RequestParam(required = false) String plantType,
+
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir
     ) {
         var response = inventoryService.findAll(
-                page, size, userId, plantType, sortBy, sortDir
+                page, size, userId, sortBy, sortDir
         );
         return ResponseEntity.ok(response);
     }

@@ -5,12 +5,15 @@ import com.example.demo.gardencell.controller.dtos.UpdateGardenCellRequest;
 import com.example.demo.gardencell.controller.dtos.GardenCellResponse;
 import com.example.demo.gardencell.controller.dtos.GardenCellsViewResponse;
 import com.example.demo.gardencell.model.GardenCellEntity;
+import com.example.demo.plantStage.mapper.IPlantStageMapper;
 import org.mapstruct.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface IGardenCellMapper {
+
 
     /**
      * Map CreateGardenCellRequest to GardenCellEntity.
@@ -25,20 +28,15 @@ public interface IGardenCellMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "garden", ignore = true)
-    @Mapping(target = "plantInventory", ignore = true)
     @Mapping(target = "quantity", ignore = true)
     void updateEntityFromRequest(UpdateGardenCellRequest request, @MappingTarget GardenCellEntity entity);
 
     /**
      * Map GardenCellEntity to GardenCellResponse.
      */
-    @Mapping(target = "id", expression = "java(String.valueOf(entity.getId()))")
-    @Mapping(target = "rowIndex", source = "rowIndex")
-    @Mapping(target = "colIndex", source = "colIndex")
-    @Mapping(target = "quantity", source = "quantity")
-    @Mapping(target = "healthStatus", source = "healthStatus")
-    @Mapping(target = "plantInventoryId", expression = "java(String.valueOf(entity.getPlantInventory().getId()))")
-    @Mapping(target = "icon", source = "plantInventory.icon")
+
+    @Mapping(target = "plantVariety", ignore = true)
+
     GardenCellResponse entityToSummary(GardenCellEntity entity);
 
     /**
@@ -49,9 +47,11 @@ public interface IGardenCellMapper {
             return GardenCellsViewResponse.builder()
                     .build();
         }
-        List<GardenCellResponse> cells = entities.stream()
-                .map(this::entityToSummary)
-                .toList();
+        List<GardenCellResponse> cells = new ArrayList<>();
+        for (GardenCellEntity entity : entities) {
+            GardenCellResponse gardenCellResponse = entityToSummary(entity);
+            cells.add(gardenCellResponse);
+        }
         return GardenCellsViewResponse.builder()
                 .cells(cells)
                 .build();
@@ -60,5 +60,6 @@ public interface IGardenCellMapper {
     /**
      * Map list of GardenCellEntity to list of GardenCellResponse.
      */
+    @Mapping(target = "cells" , ignore = true)
     List<GardenCellResponse> entitiesToSummaries(List<GardenCellEntity> entities);
 }

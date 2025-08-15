@@ -25,7 +25,7 @@ public interface IPostService {
             Integer page,
             Integer size,
             String userId,
-
+String body,
             LocalDateTime createdFrom,
             LocalDateTime createdTo,
             String sortBy,

@@ -92,17 +92,17 @@ public abstract class BaseUserService<T> implements IUserService<T> {
     @Override
     public ApiResponse<Void> deleteUsers(DeleteUsersRequest deleteUsersRequest) {
         for (String id : deleteUsersRequest.getIds()) {
-            if (!UserSpecification.hasId(id).toString().isEmpty()) {
-                var user = userRepository.findOne(UserSpecification.hasId(id))
-                        .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
-                if (user.getDeletedAt() != null) {
-                    user.setDeletedAt(LocalDateTime.now());
-                    userRepository.save(user);
-                } else {
-                    user.setDeletedAt(null);
-                    userRepository.save(user);
-                }
-            }
+           var user = userRepository.findOne(UserSpecification.hasId(id))
+                   .orElseThrow(() -> new CustomRuntimeException(ErrorCode.USER_NOT_FOUND));
+           if(user.getRole() == Role.ADMIN) {
+               continue;
+           }
+           if(user.getDeletedAt() == null) {
+               user.setDeletedAt(LocalDateTime.now());
+           }else {
+               user.setDeletedAt(null);
+           }
+           userRepository.save(user);
         }
         return ApiResponse.<Void>builder()
                 .message("Successfully deleted users")

@@ -15,5 +15,6 @@ public class GardenResponse {
     Integer rowLength;
     Integer colLength;
     GardenCondition gardenCondition;
+    String soil;
     String userId;
 }

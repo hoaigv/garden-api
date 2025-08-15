@@ -30,13 +30,7 @@ public interface IPlantInventoryMapper {
      * Map PlantInventoryEntity to PlantInventoryResponse.
      */
     @Mapping(target = "id", expression = "java(String.valueOf(entity.getId()))")
-    @Mapping(target = "userId", expression = "java(String.valueOf(entity.getUser().getId()))")
-    @Mapping(target = "plantType", source = "plantType")
-    @Mapping(target = "imageUrl", source = "imageUrl")
-    @Mapping(target = "inventoryQuantity", source = "inventoryQuantity")
-    @Mapping(target = "perCellMax", source = "perCellMax")
-    @Mapping(target = "description", source = "description")
-    @Mapping(target = "name", source = "name")
+    @Mapping(target = "plantVariety", ignore = true)
     PlantInventoryResponse entityToResponse(PlantInventoryEntity entity);
 
     /**

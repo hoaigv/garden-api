@@ -17,4 +17,11 @@ public class UpdateGardenRequest {
     @NotBlank(message = "Garden name must not be blank")
     @NotNull(message = "Garden name must not be null")
     String name;
+
+    @NotBlank(message = "Soil type must not be blank")
+    @Pattern(
+            regexp = "SANDY_SOIL|LOAMY_SAND|LOAM|CLAY_LOAM|CLAY_SOIL|ALLUVIAL_SOIL|PEATY_SOIL|CHALKY_SOIL|ACID_SULFATE_SOIL|BASALTIC_SOIL|RED_SOIL|BLACK_SOIL|INFERTILE_SOIL",
+            message = "Soil type must be one of the predefined soil types"
+    )
+    String soil;
 }

@@ -1,6 +1,7 @@
 package com.example.demo.plantInventory.controllers.dtos;
 
 import com.example.demo.common.enums.PlantTypeEnum;
+import com.example.demo.plantVariety.controller.dtos.PlantVarietyResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,12 +16,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlantInventoryResponse {
     String id;
-    String userId;
-    PlantTypeEnum plantType;
-    String imageUrl;
-    Integer inventoryQuantity;
-    Integer perCellMax;
-    String description;
-    String name;
-    String icon;
+    Integer numberOfVariety;
+    PlantVarietyResponse plantVariety;
 }

@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "garden_health")
 @Table
 @Getter
 @Setter
@@ -38,6 +38,9 @@ public class GardenHealthEntity extends BaseEntity {
 
     @Column(nullable = false)
     Integer diseaseCell;
+
+    @Column
+    String diseaseName;
 
 
     /**
